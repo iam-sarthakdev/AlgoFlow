@@ -5,8 +5,9 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
+    "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "dev": "node --watch src/server.js"
+    "seed:companies": "node src/scripts/seedCompanyProblems.js"
   },
   "keywords": [
     "dsa",

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Building2, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { fetchProblems } from '../services/api';
+import { fetchAllCompanies } from '../services/companyProblemsApi';
 
 const CompaniesPage = () => {
     const navigate = useNavigate();
@@ -17,28 +17,17 @@ const CompaniesPage = () => {
     const loadCompanies = async () => {
         try {
             setLoading(true);
-            const data = await fetchProblems();
-            if (data && data.problems) {
-                // Aggregate companies
-                const companyMap = new Map();
-                data.problems.forEach(problem => {
-                    if (problem.companies && problem.companies.length > 0) {
-                        problem.companies.forEach(company => {
-                            const count = companyMap.get(company) || 0;
-                            companyMap.set(company, count + 1);
-                        });
-                    }
-                });
+            const data = await fetchAllCompanies();
 
-                // Convert to array and sort by count (desc) then name (asc)
-                const sortedCompanies = Array.from(companyMap.entries())
-                    .map(([name, count]) => ({ name, count }))
-                    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
-
-                setCompanies(sortedCompanies);
+            if (data && data.companies) {
+                // Sort by problem count (descending)
+                const sorted = data.companies.sort((a, b) => b.problemCount - a.problemCount);
+                setCompanies(sorted);
             }
         } catch (err) {
             console.error('Failed to load companies:', err);
+            // Fallback to empty array if API fails
+            setCompanies([]);
         } finally {
             setLoading(false);
         }
@@ -100,7 +89,7 @@ const CompaniesPage = () => {
                                             {company.name}
                                         </h3>
                                         <span className="text-xs text-white/50">
-                                            {company.count} problems
+                                            {company.problemCount} problems
                                         </span>
                                     </div>
                                 </div>

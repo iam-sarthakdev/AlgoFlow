@@ -22,7 +22,10 @@ connectDB();
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:5173', // Vite dev server
+    origin: [
+        'http://localhost:5173', // Local development
+        'https://algo-flow-sarthak-kanois-projects.vercel.app' // Production
+    ],
     credentials: true
 }));
 app.use(express.json());

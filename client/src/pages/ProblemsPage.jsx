@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Plus, Search, Filter, Edit2, Trash2, CheckCircle, Clock, RefreshCw, ExternalLink, Grid, List } from 'lucide-react';
+import { Plus, Search, Filter, Edit2, Trash2, CheckCircle, Clock, RefreshCw, ExternalLink, Grid, List, Building2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CustomSelect from '../components/CustomSelect';
 import { fetchProblems, deleteProblem, markAsRevised, fetchPatterns } from '../services/api';
+import { fetchCompanyProblems } from '../services/companyProblemsApi';
 import { TOPICS, DIFFICULTIES } from '../utils/constants';
 
 const ProblemsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [problems, setProblems] = useState([]);
+    const [userProblems, setUserProblems] = useState([]);
+    const [companyProblems, setCompanyProblems] = useState([]);
     const [patterns, setPatterns] = useState([]); // State for patterns
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [viewMode, setViewMode] = useState('grid');
+    const [showSource, setShowSource] = useState('all'); // 'all', 'user', 'company'
 
     const [filters, setFilters] = useState({
         topic: '',
@@ -29,13 +32,14 @@ const ProblemsPage = () => {
         const company = params.get('company');
         if (company) {
             setFilters(prev => ({ ...prev, company }));
+            setShowSource('company');
         }
     }, [location.search]);
 
     useEffect(() => {
-        loadProblems();
+        loadAllProblems();
         loadPatterns(); // Load patterns on mount
-    }, [filters]);
+    }, [filters, showSource]);
 
     const loadPatterns = async () => {
         try {
@@ -49,11 +53,38 @@ const ProblemsPage = () => {
         }
     };
 
-    const loadProblems = async () => {
+    const loadAllProblems = async () => {
         try {
             setLoading(true);
-            const data = await fetchProblems(); // remove filters arg, filtering client side for now/or standard query
-            setProblems(data.problems);
+
+            // Load user's personal problems
+            const userData = await fetchProblems();
+            const mappedUserProblems = (userData.problems || []).map(p => ({
+                ...p,
+                source: 'user',
+                title: p.problem_name || p.title
+            }));
+            setUserProblems(mappedUserProblems);
+
+            // Load seeded company problems
+            if (showSource === 'all' || showSource === 'company') {
+                try {
+                    const companyData = await fetchCompanyProblems(filters);
+                    const mappedCompanyProblems = (companyData.problems || []).map(p => ({
+                        ...p,
+                        source: 'company',
+                        id: p._id,
+                        problem_name: p.title,
+                        topic: p.topics?.[0] || 'Unknown'
+                    }));
+                    setCompanyProblems(mappedCompanyProblems);
+                } catch (err) {
+                    console.error('Failed to load company problems:', err);
+                    setCompanyProblems([]);
+                }
+            } else {
+                setCompanyProblems([]);
+            }
         } catch (err) {
             console.error('Failed to load problems:', err);
         } finally {
@@ -73,7 +104,7 @@ const ProblemsPage = () => {
             });
 
             if (response.ok) {
-                await loadProblems();
+                await loadAllProblems();
                 alert('Auto-tagging complete! Patterns assigned based on topic/title.');
             }
         } catch (err) {
@@ -86,7 +117,7 @@ const ProblemsPage = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Delete this problem?')) {
             await deleteProblem(id);
-            loadProblems();
+            loadAllProblems();
         }
     };
 
@@ -94,18 +125,23 @@ const ProblemsPage = () => {
         e.stopPropagation();
         try {
             await markAsRevised(id, { notes: 'Quick revision' });
-            loadProblems();
+            loadAllProblems();
         } catch (err) {
             console.error('Failed to mark as revised:', err);
         }
     };
 
-    // Filter problems
-    const filteredProblems = problems.filter(problem => {
-        const matchSearch = problem.title.toLowerCase().includes(searchQuery.toLowerCase());
+    // Combine and filter problems
+    const combinedProblems = showSource === 'user' ? userProblems
+        : showSource === 'company' ? companyProblems
+            : [...userProblems, ...companyProblems];
+
+    const filteredProblems = combinedProblems.filter(problem => {
+        const title = problem.title || problem.problem_name || '';
+        const matchSearch = title.toLowerCase().includes(searchQuery.toLowerCase());
         const matchTopic = !filters.topic || problem.topic === filters.topic;
         const matchDifficulty = !filters.difficulty || problem.difficulty === filters.difficulty;
-        const matchPattern = !filters.pattern || (problem.patterns && problem.patterns.includes(filters.pattern));
+        const matchPattern = !filters.pattern || (problem.patterns && problem.patterns.includes(filters.pattern)) || (problem.topics && problem.topics.includes(filters.pattern));
         const matchCompany = !filters.company || (problem.companies && problem.companies.includes(filters.company));
         return matchSearch && matchTopic && matchDifficulty && matchPattern && matchCompany;
     });
@@ -266,6 +302,27 @@ const ProblemsPage = () => {
                     <p className="text-white/60">{filteredProblems.length} problems tracked</p>
                 </div>
                 <div className="flex gap-4">
+                    <div className="bg-white/5 p-1 rounded-lg flex gap-1">
+                        <button
+                            onClick={() => setShowSource('all')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${showSource === 'all' ? 'bg-primary text-white' : 'text-white/60 hover:text-white'}`}
+                        >
+                            All
+                        </button>
+                        <button
+                            onClick={() => setShowSource('user')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${showSource === 'user' ? 'bg-primary text-white' : 'text-white/60 hover:text-white'}`}
+                        >
+                            Your Problems
+                        </button>
+                        <button
+                            onClick={() => setShowSource('company')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${showSource === 'company' ? 'bg-primary text-white' : 'text-white/60 hover:text-white'}`}
+                        >
+                            <Building2 size={16} />
+                            Company Database
+                        </button>
+                    </div>
                     <button
                         onClick={handleAutoTag}
                         className="bg-white/10 border border-white/20 px-4 py-3 rounded-lg font-semibold flex items-center gap-2 hover:bg-white/20 transition-all text-pink-400"

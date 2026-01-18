@@ -155,13 +155,24 @@ const ProblemsPage = () => {
         }
     };
 
+    // Handle problem click - navigate to detail for user problems, open URL for company problems
+    const handleProblemClick = (problem) => {
+        if (problem.source === 'company' && problem.url) {
+            // Company problem - open LeetCode URL in new tab
+            window.open(problem.url, '_blank');
+        } else {
+            // User problem - navigate to detail page
+            navigate(`/problems/${problem.id}`);
+        }
+    };
+
     const ProblemCard = ({ problem }) => (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             whileHover={{ y: -4 }}
-            onClick={() => navigate(`/problems/${problem.id}`)}
+            onClick={() => handleProblemClick(problem)}
             className="glass-card p-6 cursor-pointer group relative overflow-hidden"
         >
             {/* Solved indicator */}
@@ -244,7 +255,7 @@ const ProblemsPage = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0 }}
-            onClick={() => navigate(`/problems/${problem.id}`)}
+            onClick={() => handleProblemClick(problem)}
             className="glass-card p-4 cursor-pointer hover:bg-white/5 transition-colors flex items-center justify-between group"
         >
             <div className="flex items-center gap-4 flex-1">

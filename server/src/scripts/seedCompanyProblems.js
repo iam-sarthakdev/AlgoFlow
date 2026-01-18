@@ -81,14 +81,42 @@ function parseCSV(csvText) {
 }
 
 async function fetchCompanyProblems(company) {
-    try {
-        const url = `https://raw.githubusercontent.com/liquidslr/leetcode-company-wise-problems/main/${encodeURIComponent(company)}/5.%20All.csv`;
-        const response = await axios.get(url);
-        return parseCSV(response.data);
-    } catch (error) {
-        console.log(`⚠️  ${company}: No data available`);
-        return [];
+    const csvFiles = [
+        '1.%20Thirty%20Days.csv',
+        '2.%20Three%20Months.csv',
+        '3.%20Six%20Months.csv',
+        '4.%20More%20Than%20Six%20Months.csv',
+        '5.%20All.csv'
+    ];
+
+    const allProblems = [];
+    const seenProblems = new Set();
+
+    for (const csvFile of csvFiles) {
+        try {
+            const url = `https://raw.githubusercontent.com/liquidslr/leetcode-company-wise-problems/main/${encodeURIComponent(company)}/${csvFile}`;
+            const response = await axios.get(url);
+            const problems = parseCSV(response.data);
+
+            // Deduplicate within this company
+            for (const problem of problems) {
+                const key = `${problem.title}-${problem.difficulty}`;
+                if (!seenProblems.has(key)) {
+                    seenProblems.add(key);
+                    allProblems.push(problem);
+                }
+            }
+        } catch (error) {
+            // Silently continue if a specific CSV doesn't exist
+            continue;
+        }
     }
+
+    if (allProblems.length === 0) {
+        console.log(`⚠️  ${company}: No data available`);
+    }
+
+    return allProblems;
 }
 
 async function seedDatabase() {

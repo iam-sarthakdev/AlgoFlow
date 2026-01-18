@@ -6,7 +6,7 @@
 
 **A scientifically-proven spaced repetition system for mastering Data Structures & Algorithms**
 
-[![Live Demo](https://img.shields.io/badge/LIVE%20DEMO-Click%20Here-success?style=for-the-badge&logo=vercel)](https://algo-flow-sarthak-kanois-projects.vercel.app/)
+[![Live Demo](https://algo-flow-khaki.vercel.app/)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/iam-sarthakdev/AlgoFlow)
 
 [Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [Architecture](#-architecture) • [Deployment](#-deployment)

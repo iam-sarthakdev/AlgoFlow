@@ -9,31 +9,50 @@ class LeetCodeService {
     }
 
     async makeGraphQLRequest(query, variables = {}) {
-        try {
-            const headers = {
-                'Content-Type': 'application/json',
-                'Referer': 'https://leetcode.com',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            };
-
-            // Only attach auth headers if valid credentials exist
-            if (this.sessionCookie && this.csrfToken) {
-                headers['Cookie'] = `LEETCODE_SESSION=${this.sessionCookie}; csrftoken=${this.csrfToken}`;
-                headers['x-csrftoken'] = this.csrfToken;
-            }
-
-            const response = await axios.post(
+        const makeRequest = async (headers) => {
+            return axios.post(
                 LEETCODE_GRAPHQL_URL,
                 { query, variables },
-                { headers }
+                { headers } // headers object controls content-type and auth
             );
-            return response.data;
-        } catch (error) {
-            console.error('LeetCode GraphQL Error:', error.response?.data || error.message);
+        };
 
-            // If we failed with 401/403 and had credentials, maybe retry without? 
-            // For now, usually User-Agent fix is enough. 
-            // We throw a generic error to be caught by controller.
+        const baseHeaders = {
+            'Content-Type': 'application/json',
+            'Referer': 'https://leetcode.com',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        };
+
+        try {
+            // 1. Try with Auth if available
+            if (this.sessionCookie && this.csrfToken) {
+                try {
+                    const authHeaders = {
+                        ...baseHeaders,
+                        'Cookie': `LEETCODE_SESSION=${this.sessionCookie}; csrftoken=${this.csrfToken}`,
+                        'x-csrftoken': this.csrfToken
+                    };
+                    const response = await makeRequest(authHeaders);
+
+                    // Check for GraphQL errors inside 200 OK response (common in GraphQL)
+                    if (response.data.errors) {
+                        throw new Error('GraphQL Error: ' + JSON.stringify(response.data.errors));
+                    }
+                    return response.data;
+                } catch (authError) {
+                    console.warn('⚠️ Authenticated request failed, retrying without auth:', authError.message);
+                    // Fallthrough to public retry
+                }
+            }
+
+            // 2. Retry / Fallback to Public Request (No Auth)
+            console.log('🌐 Making public request to LeetCode...');
+            const response = await makeRequest(baseHeaders);
+            return response.data;
+
+        } catch (error) {
+            // Log full error details for debugging
+            console.error('❌ LeetCode GraphQL Final Error:', error.response?.data || error.message);
             throw new Error('Failed to fetch from LeetCode');
         }
     }

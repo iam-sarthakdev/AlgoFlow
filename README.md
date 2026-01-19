@@ -445,19 +445,21 @@ FAANG-Forge/
 
 ---
 
-## 📸 Screenshots
-
 ### Dashboard
-![Dashboard](https://via.placeholder.com/800x400?text=Dashboard+Screenshot)
+![Dashboard](screenshots/dashboard.png)
 
-### Analytics
-![Analytics](https://via.placeholder.com/800x400?text=Analytics+Screenshot)
+### DSA Sheets
+![DSA Sheets](screenshots/dsa_sheets.png)
 
-### System Design (LLD)
-![LLD](https://via.placeholder.com/800x400?text=LLD+Screenshot)
+### All Problems
+![All Problems](screenshots/all_problems.png)
 
-### Companies
-![Companies](https://via.placeholder.com/800x400?text=Companies+Screenshot)
+### Fundamentals (OS/DBMS)
+![Fundamentals](screenshots/fundamentals.png)
+
+### System Design (LLD/HLD)
+![System Design](screenshots/system_design.png)
+
 
 ---
 

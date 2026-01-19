@@ -460,6 +460,15 @@ FAANG-Forge/
 ### System Design (LLD/HLD)
 ![System Design](screenshots/system_design.png)
 
+### Analytics & Performance
+![Analytics](screenshots/analytics.png)
+
+### Company Database
+![Companies](screenshots/companies.png)
+
+### Behavioral Preparation
+![Behavioral](screenshots/behavioral.png)
+
 
 ---
 

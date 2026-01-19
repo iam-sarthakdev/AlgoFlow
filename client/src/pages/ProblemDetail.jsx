@@ -193,14 +193,36 @@ const ProblemDetail = () => {
             setIsLoadingLeetCode(true);
             setLeetCodeError('');
 
-            // Use URL if available, otherwise use title
-            const urlOrTitle = formData.url || formData.title;
+            let formattedNotes;
 
-            if (!urlOrTitle) {
+            // Robust Fetch Logic:
+            // 1. Try URL if it looks valid
+            // 2. If URL fails (or isn't there), try Title
+
+            if (formData.url && formData.url.includes('leetcode.com')) {
+                try {
+                    formattedNotes = await autoPopulateNotes(formData.url);
+                } catch (err) {
+                    console.warn('Fetch with URL failed, trying Title as fallback...', err);
+
+                    if (formData.title) {
+                        // If URL failed (maybe truncated), try the Title
+                        try {
+                            formattedNotes = await autoPopulateNotes(formData.title);
+                        } catch (titleErr) {
+                            // If title also fails, throw the original error (usually more descriptive) or a combined one
+                            throw new Error(`Failed to fetch. verified URL is invalid and Title search failed.`);
+                        }
+                    } else {
+                        throw err;
+                    }
+                }
+            } else if (formData.title) {
+                // No URL, just use title
+                formattedNotes = await autoPopulateNotes(formData.title);
+            } else {
                 throw new Error('Please add a problem title or LeetCode URL first');
             }
-
-            const formattedNotes = await autoPopulateNotes(urlOrTitle);
 
             // Append to existing notes if they exist, or replace
             const newNotes = formData.notes

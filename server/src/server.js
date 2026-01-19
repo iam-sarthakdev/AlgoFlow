@@ -14,7 +14,7 @@ import contentRoutes from './routes/content.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { scheduleReminderJob } from './jobs/reminderJob.js';
 
-import { seedCompanyProblems } from './scripts/seedCompanyProblemsLocal.js';
+import seedRoutes from './routes/seedRoutes.js';
 import CompanyProblem from './models/CompanyProblem.js';
 
 // ... imports
@@ -65,6 +65,7 @@ app.use('/api/patterns', patternRoutes);
 app.use('/api/system-design', systemDesignRoutes);
 app.use('/api/company-problems', companyProblemsRoutes);
 app.use('/api/content', contentRoutes);
+app.use('/api/admin', seedRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -79,20 +80,15 @@ const startServer = async () => {
         // Connect to MongoDB
         await connectDB();
 
-        // Auto-seed company problems if empty or incomplete
+        // Check database status (non-blocking, just informational)
         try {
             const count = await CompanyProblem.countDocuments();
-            const shouldSeed = count < 500 || process.env.FORCE_SEED === 'true';
-
-            if (shouldSeed) {
-                console.log(`🌱 Database invalid (count: ${count}). Starting full auto-seed...`);
-                await seedCompanyProblems();
-                console.log('✅ Auto-seed completed.');
-            } else {
-                console.log(`📦 Database verified: ${count} company problems present.`);
+            console.log(`📦 Database status: ${count} company problems present.`);
+            if (count < 500) {
+                console.log(`💡 Tip: Run 'npm run seed' locally or use POST /api/admin/seed-companies to seed data.`);
             }
-        } catch (seedError) {
-            console.error('⚠️ Auto-seed failed (continuing server start):', seedError);
+        } catch (countError) {
+            console.warn('⚠️ Could not count company problems:', countError.message);
         }
 
         // Start server

@@ -201,7 +201,7 @@ export const updateProblem = async (req, res, next) => {
     try {
         const { id } = req.params;
         const userId = req.user.userId;
-        const { title, url, topic, difficulty, notes, next_reminder_date, timeComplexity, spaceComplexity, codeSnippet, isSolved } = req.body;
+        const { title, url, topic, difficulty, notes, next_reminder_date, timeComplexity, spaceComplexity, codeSnippet, language, isSolved, patterns, companies, tags, hints } = req.body;
 
         const updates = {};
         if (title !== undefined) updates.title = title;
@@ -217,7 +217,12 @@ export const updateProblem = async (req, res, next) => {
         if (timeComplexity !== undefined) updates.timeComplexity = timeComplexity;
         if (spaceComplexity !== undefined) updates.spaceComplexity = spaceComplexity;
         if (codeSnippet !== undefined) updates.codeSnippet = codeSnippet;
+        if (language !== undefined) updates.language = language;
         if (isSolved !== undefined) updates.isSolved = isSolved;
+        if (patterns !== undefined) updates.patterns = patterns;
+        if (companies !== undefined) updates.companies = companies;
+        if (tags !== undefined) updates.tags = tags;
+        if (hints !== undefined) updates.hints = hints;
         if (next_reminder_date !== undefined) {
             updates.next_reminder_date = next_reminder_date;
             updates.status = next_reminder_date === null ? 'no_reminder' : 'pending';

@@ -46,6 +46,51 @@ export const getAllCompanies = async (req, res) => {
     }
 };
 
+// Get all company problems (paginated)
+export const getAllCompanyProblems = async (req, res) => {
+    try {
+        const { difficulty, search, page = 1, limit = 50 } = req.query;
+
+        const query = {};
+
+        if (difficulty) {
+            query.difficulty = difficulty;
+        }
+
+        if (search) {
+            query.$text = { $search: search };
+        }
+
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+
+        const [problems, total] = await Promise.all([
+            CompanyProblem.find(query)
+                .sort({ frequency: -1, title: 1 })
+                .skip(skip)
+                .limit(parseInt(limit))
+                .select('-__v'),
+            CompanyProblem.countDocuments(query)
+        ]);
+
+        res.json({
+            success: true,
+            problems,
+            pagination: {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                total,
+                pages: Math.ceil(total / parseInt(limit))
+            }
+        });
+    } catch (error) {
+        console.error('Get all company problems error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch company problems'
+        });
+    }
+};
+
 // Get problems for a specific company
 export const getCompanyProblems = async (req, res) => {
     try {

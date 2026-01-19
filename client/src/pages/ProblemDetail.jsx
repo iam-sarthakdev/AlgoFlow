@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Trash2, Copy, Check, Calendar, Code, FileText, Clock, Box, ExternalLink, RefreshCw, Tag, Edit2 } from 'lucide-react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { ArrowLeft, Trash2, Copy, Check, Calendar, Code, FileText, Clock, Box, ExternalLink, RefreshCw, Tag, Edit2, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { fetchProblemById, updateProblem, deleteProblem, createProblem, markAsRevised, fetchPatterns } from '../services/api';
+import { autoPopulateNotes } from '../services/leetcodeApi';
 import theme from '../styles/theme';
 import { TOPICS, DIFFICULTIES } from '../utils/constants';
 import CustomSelect from '../components/CustomSelect';
@@ -12,6 +13,7 @@ import CustomSelect from '../components/CustomSelect';
 const ProblemDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
 
@@ -20,6 +22,9 @@ const ProblemDetail = () => {
     const [isEditingCode, setIsEditingCode] = useState(false);
     const [saveStatus, setSaveStatus] = useState(''); // 'saving', 'saved', 'error'
     const [showConfetti, setShowConfetti] = useState(false);
+    const [isLoadingLeetCode, setIsLoadingLeetCode] = useState(false);
+    const [leetCodeError, setLeetCodeError] = useState('');
+    const [showLeetCodeButton, setShowLeetCodeButton] = useState(true);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -47,6 +52,19 @@ const ProblemDetail = () => {
         if (id && id !== 'new') {
             loadProblem();
         } else {
+            // Check for imported problem data
+            if (location.state && location.state.importedProblem) {
+                const imported = location.state.importedProblem;
+                setFormData(prev => ({
+                    ...prev,
+                    title: imported.title || '',
+                    topic: imported.topic || '',
+                    difficulty: imported.difficulty || '',
+                    url: imported.url || '',
+                    companies: imported.companies || []
+                }));
+            }
+
             // Load patterns for new problem
             fetchPatterns().then(data => {
                 setAvailablePatterns(data.patterns || []);
@@ -56,13 +74,13 @@ const ProblemDetail = () => {
                 setLoading(false);
             });
         }
-    }, [id]);
+    }, [id, location.state]);
 
     // Auto-save logic
     useEffect(() => {
         if (id !== 'new' && !submitting) {
             const timeoutId = setTimeout(() => {
-                handleAutoSave();
+                handleSave();
             }, 2000);
             return () => clearTimeout(timeoutId);
         }
@@ -89,6 +107,9 @@ const ProblemDetail = () => {
                 spaceComplexity: data.spaceComplexity || '',
                 next_reminder_date: data.next_reminder_date ? data.next_reminder_date.split('T')[0] : '',
                 isSolved: data.isSolved || false,
+                patterns: data.patterns || [],
+                companies: data.companies || [],
+                tags: data.tags || [],
                 hints: data.hints || []
             });
             setProblemMetadata(data);
@@ -101,15 +122,15 @@ const ProblemDetail = () => {
         }
     };
 
-    const handleAutoSave = async () => {
+    const handleSave = async () => {
         if (!formData.title) return;
         try {
             setSaveStatus('saving');
             await updateProblem(id, formData);
             setSaveStatus('saved');
-            setTimeout(() => setSaveStatus(''), 2000);
+            setTimeout(() => setSaveStatus(''), 3000);
         } catch (err) {
-            console.error('Auto-save failed:', err);
+            console.error('Save failed:', err);
             setSaveStatus('error');
         }
     };
@@ -167,6 +188,73 @@ const ProblemDetail = () => {
         }
     };
 
+    const handleAutoPopulateFromLeetCode = async () => {
+        try {
+            setIsLoadingLeetCode(true);
+            setLeetCodeError('');
+
+            // Use URL if available, otherwise use title
+            const urlOrTitle = formData.url || formData.title;
+
+            if (!urlOrTitle) {
+                throw new Error('Please add a problem title or LeetCode URL first');
+            }
+
+            const formattedNotes = await autoPopulateNotes(urlOrTitle);
+
+            // Append to existing notes if they exist, or replace
+            const newNotes = formData.notes
+                ? formData.notes + '\n\n---\n\n' + formattedNotes
+                : formattedNotes;
+
+            const updatedFormData = {
+                ...formData,
+                notes: newNotes
+            };
+
+            setFormData(updatedFormData);
+
+            setShowLeetCodeButton(false);
+
+            // AUTO-SAVE LOGIC
+            // If it's a new problem and we have the basics, try to create it immediately
+            if (id === 'new') {
+                if (updatedFormData.title && updatedFormData.topic && updatedFormData.difficulty) {
+                    setSubmitting(true);
+                    setSaveStatus('saving');
+                    try {
+                        const newProblem = await createProblem(updatedFormData);
+                        setSaveStatus('saved');
+                        // Navigate to the created problem to "permanently" lock it in
+                        navigate(`/problems/${newProblem.id}`, { replace: true });
+                    } catch (createErr) {
+                        console.error('Auto-create failed:', createErr);
+                        setSaveStatus('error');
+                        setLeetCodeError('fetched data but failed to auto-save to DB. Please click "Create Problem".');
+                    } finally {
+                        setSubmitting(false);
+                    }
+                } else {
+                    setLeetCodeError('Fetched! Please fill Topic/Difficulty and click Create.');
+                }
+            } else {
+                // For existing problem, force an update immediately
+                setSaveStatus('saving');
+                await updateProblem(id, updatedFormData);
+                setSaveStatus('saved');
+                setTimeout(() => setSaveStatus(''), 2000);
+            }
+
+        } catch (error) {
+            console.error('Failed to fetch from LeetCode:', error);
+            setLeetCodeError(error.message || 'Failed to fetch from LeetCode. Please check the problem title/URL.');
+        } finally {
+            setIsLoadingLeetCode(false);
+        }
+    };
+
+
+
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center text-white/60">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary mr-3"></div>
@@ -183,7 +271,11 @@ const ProblemDetail = () => {
             {/* Top Navigation Bar */}
             <header className="flex items-center justify-between mb-8">
                 <button
-                    onClick={() => navigate('/problems')}
+                    onClick={() => {
+                        // If there are unsaved changes (technically we don't track dirty state perfectly, 
+                        // but we can just navigate back. User should click Save first if they want to be sure.)
+                        navigate('/problems');
+                    }}
                     className="flex items-center text-white/60 hover:text-white transition-colors"
                 >
                     <ArrowLeft size={20} className="mr-2" /> Back
@@ -191,14 +283,25 @@ const ProblemDetail = () => {
 
                 <div className="flex items-center gap-4">
                     {/* Save Status Indicator */}
-                    <div className="text-sm font-medium">
+                    <div className="text-sm font-medium mr-2">
                         {saveStatus === 'saving' && <span className="text-yellow-500 animate-pulse">Saving...</span>}
-                        {saveStatus === 'saved' && <span className="text-green-500 flex items-center"><Check size={14} className="mr-1" /> Saved</span>}
+                        {saveStatus === 'saved' && <span className="text-green-500 flex items-center"><Check size={14} className="mr-1" /> All changes saved</span>}
                         {saveStatus === 'revised' && <span className="text-blue-500 flex items-center">🎉 Revision Recorded!</span>}
+                        {saveStatus === 'error' && <span className="text-red-500 flex items-center">Error saving</span>}
                     </div>
 
                     {id !== 'new' && (
                         <div className="flex items-center gap-2">
+                            {/* Manual Save Button */}
+                            <button
+                                onClick={handleSave} // Reuse the save logic, it does exactly what we want
+                                disabled={saveStatus === 'saving'}
+                                className="bg-primary hover:bg-primary/80 text-white font-medium px-5 py-2 rounded-lg flex items-center transition-all shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <Check size={16} className="mr-2" />
+                                Save Changes
+                            </button>
+
                             {/* Mark as Solved Toggle */}
                             <button
                                 onClick={() => setFormData({ ...formData, isSolved: !formData.isSolved })}
@@ -208,12 +311,12 @@ const ProblemDetail = () => {
                                     }`}
                             >
                                 <Check size={16} className="mr-2" />
-                                {formData.isSolved ? 'Solved ✓' : 'Mark Solved'}
+                                {formData.isSolved ? 'Solved' : 'Mark Solved'}
                             </button>
 
                             <button
                                 onClick={handleMarkRevised}
-                                className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/50 px-4 py-2 rounded-lg flex items-center transition-all"
+                                className="bg-white/5 hover:bg-white/10 text-white border border-white/20 px-4 py-2 rounded-lg flex items-center transition-all"
                             >
                                 <RefreshCw size={16} className="mr-2" />
                                 Mark as Revised
@@ -378,7 +481,7 @@ const ProblemDetail = () => {
                                             >
                                                 <div className="flex items-center gap-2 overflow-hidden">
                                                     <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${rp.difficulty === 'Easy' ? 'bg-green-500' :
-                                                            rp.difficulty === 'Medium' ? 'bg-yellow-500' : 'bg-red-500'
+                                                        rp.difficulty === 'Medium' ? 'bg-yellow-500' : 'bg-red-500'
                                                         }`} />
                                                     <span className="text-sm text-white/80 truncate group-hover:text-primary transition-colors">{rp.title}</span>
                                                 </div>
@@ -507,12 +610,45 @@ const ProblemDetail = () => {
                         {/* Editor Content */}
                         <div className="flex-1 bg-[#151517] relative">
                             {activeTab === 'notes' ? (
-                                <textarea
-                                    className="w-full h-full bg-transparent p-6 text-white/90 leading-relaxed outline-none resize-none font-sans"
-                                    placeholder="# Approach & Thoughts..."
-                                    value={formData.notes}
-                                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                />
+                                <div className="w-full h-full flex flex-col">
+                                    {/* LeetCode Auto-populate Button */}
+                                    {showLeetCodeButton && (
+                                        <div className="p-4 border-b border-white/10 bg-[#1E1E1E] flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <Sparkles size={16} className="text-primary" />
+                                                <span className="text-sm text-white/70">Auto-populate from LeetCode</span>
+                                            </div>
+                                            <button
+                                                onClick={handleAutoPopulateFromLeetCode}
+                                                disabled={isLoadingLeetCode}
+                                                className="px-4 py-2 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/50 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                            >
+                                                {isLoadingLeetCode ? (
+                                                    <>
+                                                        <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-primary"></div>
+                                                        Loading...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Sparkles size={14} />
+                                                        Fetch from LeetCode
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+                                    )}
+                                    {leetCodeError && (
+                                        <div className="px-4 py-2 bg-red-500/10 border-b border-red-500/20 text-red-400 text-sm">
+                                            {leetCodeError}
+                                        </div>
+                                    )}
+                                    <textarea
+                                        className="flex-1 w-full bg-transparent p-6 text-white/90 leading-relaxed outline-none resize-none font-sans"
+                                        placeholder="# Approach & Thoughts..."
+                                        value={formData.notes}
+                                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                    />
+                                </div>
                             ) : (
                                 <div className="flex-1 overflow-hidden h-full flex flex-col">
                                     <div className="flex items-center justify-between px-4 py-2 bg-[#1E1E1E] border-b border-white/10 shrink-0 z-10">

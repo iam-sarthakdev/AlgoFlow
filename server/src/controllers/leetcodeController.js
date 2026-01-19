@@ -425,6 +425,40 @@ export const syncFromGitHub = async (req, res, next) => {
     }
 };
 
+// Get problem details by slug (public/authenticated)
+export const getProblemDetailsPublic = async (req, res, next) => {
+    try {
+        const { slug } = req.params;
+        const userId = req.user.userId;
+
+        // Try to get credentials
+        const syncConfig = await LeetCodeSync.findOne({ user_id: userId });
+
+        let sessionCookie = '';
+        let csrfToken = '';
+
+        if (syncConfig) {
+            sessionCookie = decrypt(syncConfig.session_cookie);
+            csrfToken = syncConfig.csrf_token;
+        }
+
+        const leetcodeService = new LeetCodeService(sessionCookie, csrfToken);
+        const problemDetails = await leetcodeService.getProblemDetails(slug);
+
+        if (!problemDetails) {
+            return res.status(404).json({ error: 'Problem not found on LeetCode' });
+        }
+
+        res.json({
+            success: true,
+            problem: problemDetails
+        });
+    } catch (error) {
+        console.error('Fetch problem details error:', error);
+        next(error);
+    }
+};
+
 // Delete LeetCode integration
 export const deleteLeetCodeIntegration = async (req, res, next) => {
     try {

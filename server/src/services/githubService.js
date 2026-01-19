@@ -119,6 +119,63 @@ class GitHubService {
     }
 
     /**
+     * Fetch directory contents from a specific path
+     */
+    async getDirectoryContents(path = '') {
+        try {
+            // Remove leading slash if present
+            const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+            // Encode the path to handle spaces (e.g., "Technical Subjects" -> "Technical%20Subjects")
+            const encodedPath = encodeURI(cleanPath);
+            const url = cleanPath ? `${this.baseUrl}/contents/${encodedPath}` : `${this.baseUrl}/contents`;
+
+            console.log(`📡 Fetching directory: ${url}`);
+
+            const response = await axios.get(url, {
+                headers: this.headers
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error(`Error fetching directory ${path}:`, error.message);
+            // Return empty array for 404s to handle missing folders gracefully
+            if (error.response && error.response.status === 404) return [];
+            throw error;
+        }
+    }
+
+    /**
+     * Fetch raw file content
+     */
+    async getFileContent(path) {
+        try {
+            const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+            const encodedPath = encodeURI(cleanPath);
+            const url = `${this.baseUrl}/contents/${encodedPath}`;
+
+            const response = await axios.get(url, {
+                headers: this.headers
+            });
+
+            if (response.data.content && response.data.encoding === 'base64') {
+                return Buffer.from(response.data.content, 'base64').toString('utf-8');
+            }
+
+            // If it's too large, it might provide a download_url/raw directly, 
+            // but the /contents API usually limits to 1MB. For larger, we use download_url.
+            if (response.data.download_url) {
+                const rawResponse = await axios.get(response.data.download_url);
+                return rawResponse.data;
+            }
+
+            return '';
+        } catch (error) {
+            console.error(`Error fetching file ${path}:`, error.message);
+            return null;
+        }
+    }
+
+    /**
      * Get all problems with their code from GitHub
      */
     async getAllProblemsWithCode() {

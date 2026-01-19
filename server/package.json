@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "seed:companies": "node src/scripts/seedCompanyProblems.js"
+    "seed:companies": "node src/scripts/seedCompanyProblemsLocal.js"
   },
   "keywords": [
     "dsa",
@@ -26,5 +26,8 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.0.3",
     "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }

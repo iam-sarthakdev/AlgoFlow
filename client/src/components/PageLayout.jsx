@@ -1,11 +1,13 @@
 import React from 'react';
 import Navigation from '../components/Navigation';
 
-const PageLayout = ({ children }) => {
+const PageLayout = ({ children, fullWidth = false }) => {
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-[#050505]">
             <Navigation />
-            <main>{children}</main>
+            <main className={`${fullWidth ? '' : ''}`}>
+                {children}
+            </main>
         </div>
     );
 };

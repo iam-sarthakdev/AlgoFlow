@@ -5,7 +5,8 @@ import {
     syncFromLeetCode,
     bulkImportFromUrls,
     syncFromGitHub,
-    deleteLeetCodeIntegration
+    deleteLeetCodeIntegration,
+    getProblemDetailsPublic
 } from '../controllers/leetcodeController.js';
 import { authenticate } from '../middleware/auth.js';
 
@@ -25,6 +26,9 @@ router.post('/bulk-import', authenticate, bulkImportFromUrls);
 
 // Add GitHub sync route
 router.post('/sync-github', authenticate, syncFromGitHub);
+
+// Get problem details
+router.get('/problem/:slug', authenticate, getProblemDetailsPublic);
 
 // Delete integration
 router.delete('/integration', authenticate, deleteLeetCodeIntegration);

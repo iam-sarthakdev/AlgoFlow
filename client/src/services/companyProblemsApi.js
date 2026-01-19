@@ -12,14 +12,19 @@ const getAuthHeader = () => ({
 // Fetch company problems (seeded data)
 export const fetchCompanyProblems = async (filters = {}) => {
     const params = new URLSearchParams();
-    if (filters.company) params.append('company', filters.company);
     if (filters.difficulty) params.append('difficulty', filters.difficulty);
     if (filters.search) params.append('search', filters.search);
+    if (filters.limit) params.append('limit', filters.limit);
 
     const queryString = params.toString();
-    const url = filters.company
-        ? `${API_URL}/company-problems/companies/${filters.company}/problems${queryString ? `?${queryString}` : ''}`
-        : `${API_URL}/company-problems/companies`;
+
+    // If company is specified, fetch for that company. Otherwise fetch ALL problems.
+    let url;
+    if (filters.company) {
+        url = `${API_URL}/company-problems/companies/${encodeURIComponent(filters.company)}/problems${queryString ? `?${queryString}` : ''}`;
+    } else {
+        url = `${API_URL}/company-problems/problems${queryString ? `?${queryString}` : ''}`;
+    }
 
     const response = await axios.get(url);
     return response.data;

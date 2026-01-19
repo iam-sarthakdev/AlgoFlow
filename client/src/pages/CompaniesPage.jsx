@@ -8,6 +8,7 @@ const CompaniesPage = () => {
     const navigate = useNavigate();
     const [companies, setCompanies] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
@@ -17,16 +18,19 @@ const CompaniesPage = () => {
     const loadCompanies = async () => {
         try {
             setLoading(true);
+            setError(null);
             const data = await fetchAllCompanies();
 
             if (data && data.companies) {
                 // Sort by problem count (descending)
                 const sorted = data.companies.sort((a, b) => b.problemCount - a.problemCount);
                 setCompanies(sorted);
+            } else {
+                setCompanies([]);
             }
         } catch (err) {
             console.error('Failed to load companies:', err);
-            // Fallback to empty array if API fails
+            setError('Failed to load companies. Please try again later.');
             setCompanies([]);
         } finally {
             setLoading(false);
@@ -66,6 +70,18 @@ const CompaniesPage = () => {
             {loading ? (
                 <div className="flex items-center justify-center min-h-[400px]">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                </div>
+            ) : error ? (
+                <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+                    <div className="text-center">
+                        <p className="text-red-400 mb-2">{error}</p>
+                        <button
+                            onClick={loadCompanies}
+                            className="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/30 rounded-lg text-primary transition-colors"
+                        >
+                            Retry
+                        </button>
+                    </div>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

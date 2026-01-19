@@ -204,12 +204,15 @@ class LeetCodeService {
                     questionFrontendId
                     title
                     titleSlug
+                    content
                     difficulty
                     topicTags {
                         name
                         slug
                     }
                     stats
+                    exampleTestcases
+                    hints
                 }
             }
         `;

@@ -15,6 +15,9 @@ import EnhancedAnalyticsPage from './pages/EnhancedAnalyticsPage';
 import CompaniesPage from './pages/CompaniesPage';
 import DashboardPage from './pages/DashboardPage';
 import SystemDesignPage from './pages/SystemDesignPage';
+import FundamentalsPage from './pages/FundamentalsPage';
+import BehavioralPage from './pages/BehavioralPage';
+import DSAPrepPage from './pages/DSAPrepPage';
 import LeetCodeSettings from './pages/LeetCodeSettings';
 import PageLayout from './components/PageLayout';
 
@@ -102,10 +105,36 @@ function AppRoutes() {
                     </PageLayout>
                 </ProtectedRoute>
             } />
+            <Route path="/fundamentals" element={
+                <ProtectedRoute>
+                    <PageLayout>
+                        <FundamentalsPage />
+                    </PageLayout>
+                </ProtectedRoute>
+            } />
             <Route path="/analytics" element={
                 <ProtectedRoute>
                     <PageLayout>
-                        <EnhancedAnalyticsPage />
+                        <AnalyticsPage />
+                    </PageLayout>
+                </ProtectedRoute>
+            } />
+// Imports
+            // Imports removed from here
+
+            // ... 
+
+            <Route path="/dsa-sheets" element={
+                <ProtectedRoute>
+                    <PageLayout>
+                        <DSAPrepPage />
+                    </PageLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/behavioral" element={
+                <ProtectedRoute>
+                    <PageLayout>
+                        <BehavioralPage />
                     </PageLayout>
                 </ProtectedRoute>
             } />

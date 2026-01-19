@@ -2,8 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight, Layout, Database, Server, Globe, Shield, Activity, Layers, Boxes, CheckCircle2, Circle } from 'lucide-react';
 
-const Sidebar = ({ activeSection, onSectionChange, activeFile, className = '', completedTopics = [], onToggle, loadingProgress = false }) => {
-    const categories = [
+const Sidebar = ({ activeSection, onSectionChange, activeFile, className = '', completedTopics = [], onToggle, loadingProgress = false, categories: propCategories }) => {
+    const defaultCategories = [
         {
             title: 'Core Concepts',
             items: [
@@ -40,10 +40,12 @@ const Sidebar = ({ activeSection, onSectionChange, activeFile, className = '', c
         }
     ];
 
+    const categories = propCategories || defaultCategories;
+
     // Calculate progress
     const totalItems = categories.reduce((acc, cat) => acc + cat.items.length, 0);
     const completedCount = completedTopics.length;
-    const progressPercentage = Math.round((completedCount / totalItems) * 100);
+    const progressPercentage = totalItems > 0 ? Math.round((completedCount / totalItems) * 100) : 0;
 
     const handleItemClick = (item) => {
         onSectionChange(item);

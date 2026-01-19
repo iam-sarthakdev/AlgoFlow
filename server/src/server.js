@@ -10,6 +10,7 @@ import leetcodeRoutes from './routes/leetcode.js';
 import patternRoutes from './routes/patterns.js';
 import systemDesignRoutes from './routes/systemDesignRoutes.js';
 import companyProblemsRoutes from './routes/companyProblems.js';
+import contentRoutes from './routes/content.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { scheduleReminderJob } from './jobs/reminderJob.js';
 
@@ -61,6 +62,7 @@ app.use('/api/leetcode', leetcodeRoutes);
 app.use('/api/patterns', patternRoutes);
 app.use('/api/system-design', systemDesignRoutes);
 app.use('/api/company-problems', companyProblemsRoutes);
+app.use('/api/content', contentRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

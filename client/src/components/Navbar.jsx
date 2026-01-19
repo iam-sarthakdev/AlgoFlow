@@ -7,7 +7,7 @@ const Navbar = () => {
 
     const navItems = [
         { path: '/', icon: Home, label: 'Dashboard' },
-        { path: '/problems', icon: ListChecks, label: 'Problems' },
+        { path: '/problems', icon: ListChecks, label: 'Questions' },
         { path: '/analytics', icon: BarChart3, label: 'Analytics' }
     ];
 
@@ -20,7 +20,7 @@ const Navbar = () => {
                         <Code2 className="w-6 h-6" />
                     </div>
                     <span className="text-2xl font-bold text-gradient">
-                        DSA Revision
+                        FAANG Forge
                     </span>
                 </Link>
 
@@ -33,8 +33,8 @@ const Navbar = () => {
                                 key={path}
                                 to={path}
                                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 ${isActive
-                                        ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg'
-                                        : 'hover:bg-white/10'
+                                    ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg'
+                                    : 'hover:bg-white/10'
                                     }`}
                             >
                                 <Icon className="w-5 h-5" />

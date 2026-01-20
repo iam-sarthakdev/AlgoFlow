@@ -114,6 +114,7 @@ export const reorderSection = async (req, res) => {
         const [removed] = list.sections.splice(sourceIndex, 1);
         list.sections.splice(destinationIndex, 0, removed);
 
+        list.markModified('sections');
         await list.save();
         res.status(200).json(list);
     } catch (error) {
@@ -136,6 +137,7 @@ export const reorderProblem = async (req, res) => {
         const [removed] = section.problems.splice(sourceIndex, 1);
         section.problems.splice(destinationIndex, 0, removed);
 
+        list.markModified('sections');
         await list.save();
         res.status(200).json(list);
     } catch (error) {
@@ -175,6 +177,28 @@ export const toggleProblemCompletion = async (req, res) => {
         if (!problem) return res.status(404).json({ message: 'Problem not found' });
 
         problem.isCompleted = !problem.isCompleted;
+        await list.save();
+
+        res.status(200).json(list);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const incrementProblemRevision = async (req, res) => {
+    const { listId, sectionId, problemId } = req.params;
+
+    try {
+        const list = await ProblemList.findById(listId);
+        if (!list) return res.status(404).json({ message: 'List not found' });
+
+        const section = list.sections.id(sectionId);
+        if (!section) return res.status(404).json({ message: 'Section not found' });
+
+        const problem = section.problems.id(problemId);
+        if (!problem) return res.status(404).json({ message: 'Problem not found' });
+
+        problem.revision_count = (problem.revision_count || 0) + 1;
         await list.save();
 
         res.status(200).json(list);

@@ -60,6 +60,12 @@ const listService = {
     getListByName,
     addProblemToList,
     toggleProblemCompletion,
+    incrementRevision: async (listId, sectionId, problemId) => {
+        const response = await axios.patch(`${API_URL}/lists/${listId}/sections/${sectionId}/problems/${problemId}/revisit`, {}, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        return response.data;
+    },
     createSection,
     deleteSection,
     deleteProblem,

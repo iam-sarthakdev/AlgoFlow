@@ -50,6 +50,10 @@ const problemListSchema = new Schema({
             isCompleted: {
                 type: Boolean,
                 default: false
+            },
+            revision_count: {
+                type: Number,
+                default: 0
             }
         }]
     }]

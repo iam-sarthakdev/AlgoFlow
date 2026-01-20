@@ -99,32 +99,36 @@ export const getAllProblems = async (req, res, next) => {
             }
         }
 
-        // Add revision count to each problem
-        const problemsWithCount = await Promise.all(
-            problems.map(async (problem) => {
-                const revisionCount = await Revision.countDocuments({
-                    problem_id: problem._id,
-                    user_id: userId
-                });
-                return {
-                    id: problem._id,
-                    title: problem.title,
-                    url: problem.url,
-                    topic: problem.topic,
-                    difficulty: problem.difficulty,
-                    notes: problem.notes,
-                    isSolved: problem.isSolved,
-                    next_reminder_date: problem.next_reminder_date,
-                    status: problem.status,
-                    created_at: problem.createdAt,
-                    updated_at: problem.updatedAt,
-                    revision_count: revisionCount,
-                    companies: problem.companies || [],
-                    patterns: problem.patterns || [],
-                    tags: problem.tags || []
-                };
-            })
-        );
+        // Optimized Revision Count Fetching (Avoid N+1)
+        const problemIds = problems.map(p => p._id);
+
+        const revisionCounts = await Revision.aggregate([
+            { $match: { user_id: new mongoose.Types.ObjectId(userId), problem_id: { $in: problemIds } } },
+            { $group: { _id: "$problem_id", count: { $sum: 1 } } }
+        ]);
+
+        const revisionMap = {};
+        revisionCounts.forEach(r => {
+            revisionMap[r._id.toString()] = r.count;
+        });
+
+        const problemsWithCount = problems.map(problem => ({
+            id: problem._id,
+            title: problem.title,
+            url: problem.url,
+            topic: problem.topic,
+            difficulty: problem.difficulty,
+            notes: problem.notes,
+            isSolved: problem.isSolved,
+            next_reminder_date: problem.next_reminder_date,
+            status: problem.status,
+            created_at: problem.createdAt,
+            updated_at: problem.updatedAt,
+            revision_count: revisionMap[problem._id.toString()] || 0,
+            companies: problem.companies || [],
+            patterns: problem.patterns || [],
+            tags: problem.tags || []
+        }));
 
         res.json({
             problems: problemsWithCount,

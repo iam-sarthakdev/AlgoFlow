@@ -473,7 +473,7 @@ const CuratedListsPage = () => {
             });
             setList({ ...list, sections: updatedSections });
 
-            await markAsRevised(problemId, { notes: 'Manual increment from list' });
+            await listService.incrementRevision(list._id, sectionId, problemId);
         } catch (err) {
             console.error(err);
             fetchList();

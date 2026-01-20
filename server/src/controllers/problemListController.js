@@ -514,10 +514,10 @@ export const seedFamousLists = async (req, res) => {
         try {
             const ncModule = await import('../data/neetcode150.js');
             neetcode150 = ncModule.default;
-            console.log("Step 3 passed: NeetCode data imported, sections:", neetcode150?.sections?.length || 0);
+            console.log("Step 3 passed: NeetCode 150 data imported, sections:", neetcode150?.sections?.length || 0);
         } catch (importError) {
             console.error("Seeding Error: Failed to import neetcode150.js:", importError.message);
-            return res.status(500).json({ message: "Failed to import NeetCode data: " + importError.message, step: "import_neetcode" });
+            return res.status(500).json({ message: "Failed to import NeetCode 150 data: " + importError.message, step: "import_neetcode150" });
         }
 
         // Step 4: Import striverA2Z data
@@ -531,7 +531,29 @@ export const seedFamousLists = async (req, res) => {
             return res.status(500).json({ message: "Failed to import Striver data: " + importError.message, step: "import_striver" });
         }
 
-        // Step 5: Upsert NeetCode 150
+        // Step 5: Import NeetCode All data
+        let neetcodeAll;
+        try {
+            const ncAllModule = await import('../data/neetcodeAll.js');
+            neetcodeAll = ncAllModule.default;
+            console.log("Step 5 passed: NeetCode All data imported, sections:", neetcodeAll?.sections?.length || 0);
+        } catch (importError) {
+            console.error("Seeding Error: Failed to import neetcodeAll.js:", importError.message);
+            return res.status(500).json({ message: "Failed to import NeetCode All data: " + importError.message, step: "import_neetcode_all" });
+        }
+
+        // Step 6: Import Love Babbar 450 data
+        let babbar450;
+        try {
+            const babbarModule = await import('../data/babbar450.js');
+            babbar450 = babbarModule.default;
+            console.log("Step 6 passed: Babbar 450 data imported, sections:", babbar450?.sections?.length || 0);
+        } catch (importError) {
+            console.error("Seeding Error: Failed to import babbar450.js:", importError.message);
+            return res.status(500).json({ message: "Failed to import Babbar 450 data: " + importError.message, step: "import_babbar450" });
+        }
+
+        // Step 7: Upsert NeetCode 150
         try {
             await ProblemList.findOneAndUpdate(
                 { name: neetcode150.name },
@@ -543,13 +565,13 @@ export const seedFamousLists = async (req, res) => {
                 },
                 { upsert: true, new: true }
             );
-            console.log("Step 5 passed: NeetCode 150 saved to database");
+            console.log("Step 7 passed: NeetCode 150 saved to database");
         } catch (dbError) {
-            console.error("Seeding Error: Failed to save NeetCode to DB:", dbError.message);
-            return res.status(500).json({ message: "Failed to save NeetCode: " + dbError.message, step: "db_neetcode" });
+            console.error("Seeding Error: Failed to save NeetCode 150 to DB:", dbError.message);
+            return res.status(500).json({ message: "Failed to save NeetCode 150: " + dbError.message, step: "db_neetcode150" });
         }
 
-        // Step 6: Upsert Striver's A2Z
+        // Step 8: Upsert Striver's A2Z
         try {
             await ProblemList.findOneAndUpdate(
                 { name: striverA2Z.name },
@@ -561,16 +583,53 @@ export const seedFamousLists = async (req, res) => {
                 },
                 { upsert: true, new: true }
             );
-            console.log("Step 6 passed: Striver's A2Z saved to database");
+            console.log("Step 8 passed: Striver's A2Z saved to database");
         } catch (dbError) {
             console.error("Seeding Error: Failed to save Striver to DB:", dbError.message);
             return res.status(500).json({ message: "Failed to save Striver: " + dbError.message, step: "db_striver" });
         }
 
-        console.log("✅ ALL STEPS PASSED - Seeding complete!");
-        res.status(200).json({ message: "Famous lists seeded successfully!" });
+        // Step 9: Upsert NeetCode All
+        try {
+            await ProblemList.findOneAndUpdate(
+                { name: neetcodeAll.name },
+                {
+                    name: neetcodeAll.name,
+                    description: neetcodeAll.description,
+                    sections: neetcodeAll.sections,
+                    is_public: true
+                },
+                { upsert: true, new: true }
+            );
+            console.log("Step 9 passed: NeetCode All saved to database");
+        } catch (dbError) {
+            console.error("Seeding Error: Failed to save NeetCode All to DB:", dbError.message);
+            return res.status(500).json({ message: "Failed to save NeetCode All: " + dbError.message, step: "db_neetcode_all" });
+        }
+
+        // Step 10: Upsert Love Babbar 450
+        try {
+            await ProblemList.findOneAndUpdate(
+                { name: babbar450.name },
+                {
+                    name: babbar450.name,
+                    description: babbar450.description,
+                    sections: babbar450.sections,
+                    is_public: true
+                },
+                { upsert: true, new: true }
+            );
+            console.log("Step 10 passed: Love Babbar 450 saved to database");
+        } catch (dbError) {
+            console.error("Seeding Error: Failed to save Babbar 450 to DB:", dbError.message);
+            return res.status(500).json({ message: "Failed to save Babbar 450: " + dbError.message, step: "db_babbar450" });
+        }
+
+        console.log("✅ ALL STEPS PASSED - Seeding complete! (4 sheets)");
+        res.status(200).json({ message: "Famous lists seeded successfully! (NeetCode 150, Striver A2Z, NeetCode All, Love Babbar 450)" });
     } catch (error) {
         console.error("Seeding error (uncaught):", error);
         res.status(500).json({ message: "Failed to seed famous lists", error: error.message, step: "unknown" });
     }
 };
+

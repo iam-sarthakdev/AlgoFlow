@@ -487,6 +487,18 @@ FAANG-Forge/
 ![System Design](screenshots/system_design.png)
 *Learn system design concepts with interactive diagrams and real-world examples*
 
+### Behavioral Interviews
+![Behavioral](screenshots/behavioral.png)
+*Master the "Soft Skills" with STAR method and psychology-based interview prep*
+
+### Top Companies Database
+![Companies](screenshots/companies.png)
+*Practice 7700+ problems from 463 companies including FAANG & top-tier firms*
+
+### Performance Analytics
+![Analytics](screenshots/analytics.png)
+*Track your preparation activity, difficulty breakdown, and revision streaks*
+
 ---
 
 ## 🤝 Contributing

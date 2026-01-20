@@ -1,10 +1,11 @@
 import express from 'express';
-import { getLists, getListByName, addProblemToList, seedDefaultLists, toggleProblemCompletion, createSection, deleteSection, deleteProblem, reorderSection, reorderProblem, incrementProblemRevision } from '../controllers/problemListController.js';
+import { getLists, getListByName, addProblemToList, seedDefaultLists, seedFamousLists, toggleProblemCompletion, createSection, deleteSection, deleteProblem, reorderSection, reorderProblem, incrementProblemRevision } from '../controllers/problemListController.js';
 
 const router = express.Router();
 
 router.get('/', getLists);
 router.post('/seed', seedDefaultLists);
+router.post('/seed-famous', seedFamousLists);
 router.get('/:name', getListByName);
 router.post('/:listId/sections/:sectionTitle/problems', addProblemToList);
 router.post('/:listId/sections', createSection);

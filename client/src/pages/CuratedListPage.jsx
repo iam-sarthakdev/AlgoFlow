@@ -223,321 +223,78 @@ const CuratedListsPage = () => {
     const { user } = useAuth();
     const isAdmin = user?.email === 'sarthak1712005@gmail.com';
 
-    const [list, setList] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [expandedSections, setExpandedSections] = useState({});
 
-    // Modals
-    const [isProblemModalOpen, setIsProblemModalOpen] = useState(false);
-    const [isPatternModalOpen, setIsPatternModalOpen] = useState(false);
-
-    // Security Modal
-    const [deleteModal, setDeleteModal] = useState({ open: false, type: null, sectionId: null, problemId: null });
-    const [deletePassword, setDeletePassword] = useState('');
-    const [verifyError, setVerifyError] = useState('');
-
-    // Sorting & UI
-    const [sortMode, setSortMode] = useState('default'); // default, easy-hard, hard-easy, revisions-desc
-
-    // State for creating new entries
-    const [selectedSection, setSelectedSection] = useState(null);
-    const [newPatternTitle, setNewPatternTitle] = useState('');
-    const [newProblem, setNewProblem] = useState({
-        title: '',
-        url: '',
-        platform: 'LeetCode',
-        difficulty: 'Medium'
-    });
-    const [submitting, setSubmitting] = useState(false);
-
-    // DnD Sensors
-    const sensors = useSensors(
-        useSensor(PointerSensor, { activationConstraint: { distance: 5 } }), // Reduced distance for easier drag start
-        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-    );
-    const [activeId, setActiveId] = useState(null); // For drag overlay
+    // --- STATE ---
+    const [viewMode, setViewMode] = useState('dashboard'); // 'dashboard' | 'list'
+    const [allLists, setAllLists] = useState([]);
+    const [currentListId, setCurrentListId] = useState(null);
 
     useEffect(() => {
-        fetchList();
+        fetchAllLists();
     }, []);
 
-    const fetchList = async () => {
+    const fetchAllLists = async () => {
         try {
-            const data = await listService.getListByName("Sarthak's List");
-            setList(data);
-            if (data?.sections?.length > 0 && Object.keys(expandedSections).length === 0) {
-                const initialExpanded = {};
-                data.sections.slice(0, 3).forEach(s => initialExpanded[s._id] = true);
-                setExpandedSections(initialExpanded);
-            }
+            const data = await listService.getLists();
+            setAllLists(data);
+            // If "Sarthak's List" is the only one, maybe auto-open it? 
+            // But user wants Dashboard now. 
         } catch (err) {
-            console.error("Error fetching list:", err);
-            setError("Could not load the list. Please try again later.");
+            console.error("Error fetching lists:", err);
+            setError("Could not load lists.");
         } finally {
             setLoading(false);
         }
     };
 
-    const toggleSection = (sectionId) => {
-        setExpandedSections(prev => ({ ...prev, [sectionId]: !prev[sectionId] }));
-    };
+    const handleSelectList = async (listName) => {
+        setLoading(true);
+        try {
+            const data = await listService.getListByName(listName);
+            setList(data);
+            setCurrentListId(data._id);
+            setViewMode('list');
 
-    // --- SORTING LOGIC ---
-    const sortedSections = useMemo(() => {
-        if (!list || !list.sections) return [];
-        let sections = JSON.parse(JSON.stringify(list.sections));
-
-        if (sortMode !== 'default') {
-            sections.forEach(section => {
-                if (sortMode === 'easy-hard') {
-                    const diffOrder = { 'Easy': 1, 'Medium': 2, 'Hard': 3, '': 4 };
-                    section.problems.sort((a, b) => diffOrder[a.difficulty] - diffOrder[b.difficulty]);
-                } else if (sortMode === 'hard-easy') {
-                    const diffOrder = { 'Easy': 3, 'Medium': 2, 'Hard': 1, '': 4 };
-                    section.problems.sort((a, b) => diffOrder[a.difficulty] - diffOrder[b.difficulty]);
-                } else if (sortMode === 'revisions-desc') {
-                    section.problems.sort((a, b) => (b.problemRef?.revision_count || 0) - (a.problemRef?.revision_count || 0));
-                }
-            });
-        }
-        return sections;
-    }, [list, sortMode]);
-
-    // --- DnD HANDLERS ---
-
-    const handleDragStart = (event) => {
-        const { active } = event;
-        setActiveId(active.id);
-
-        // Find the active item data for the overlay
-        const section = list.sections.find(s => s._id === active.id);
-        if (section) {
-            setActiveItem({ ...section, type: 'section' });
-            return;
-        }
-
-        // Search for problem
-        for (const s of list.sections) {
-            const problem = s.problems.find(p => p._id === active.id);
-            if (problem) {
-                setActiveItem({ ...problem, type: 'problem' });
-                break;
+            // Expand first few sections
+            if (data?.sections?.length > 0) {
+                const initialExpanded = {};
+                data.sections.slice(0, 3).forEach(s => initialExpanded[s._id] = true);
+                setExpandedSections(initialExpanded);
             }
-        }
-    };
-
-    const handleDragEnd = async (event) => {
-        const { active, over } = event;
-        setActiveId(null);
-        setActiveItem(null);
-
-        if (!over) return;
-
-        // Determine if section or problem
-        const isSection = list.sections.find(s => s._id === active.id);
-
-        if (isSection) {
-            if (active.id !== over.id) {
-                const oldIndex = list.sections.findIndex(s => s._id === active.id);
-                const newIndex = list.sections.findIndex(s => s._id === over.id);
-
-                // Optimistic update
-                const newSections = arrayMove(list.sections, oldIndex, newIndex);
-                setList({ ...list, sections: newSections });
-
-                try {
-                    await listService.reorderSection(list._id, oldIndex, newIndex);
-                } catch (err) {
-                    fetchList(); // Revert on fail
-                }
-            }
-        } else {
-            // Problem Dragging
-            // Important: We only support reorder within same section for now simplicity, 
-            // or we need complex logic to determine parent section
-
-            // Find source section
-            let sourceSection = list.sections.find(s => s.problems.some(p => p._id === active.id));
-            if (!sourceSection) return;
-
-            // Find target (could be a problem or section context)
-            // If dropping on a problem, find its section
-            let targetSection = list.sections.find(s => s.problems.some(p => p._id === over.id));
-
-            // Only allow reorder within same section for now
-            if (targetSection && sourceSection._id === targetSection._id) {
-                const oldIndex = sourceSection.problems.findIndex(p => p._id === active.id);
-                const newIndex = sourceSection.problems.findIndex(p => p._id === over.id);
-
-                if (oldIndex !== newIndex) {
-                    // Optimistic
-                    const updatedSections = list.sections.map(s => {
-                        if (s._id === sourceSection._id) {
-                            return { ...s, problems: arrayMove(s.problems, oldIndex, newIndex) };
-                        }
-                        return s;
-                    });
-                    setList({ ...list, sections: updatedSections });
-
-                    try {
-                        await listService.reorderProblem(list._id, sourceSection._id, oldIndex, newIndex);
-                    } catch (err) {
-                        fetchList();
-                    }
-                }
-            }
-        }
-
-    };
-
-    // New DragOverlay logic
-    const renderDragOverlay = () => {
-        if (!activeItem) return null;
-
-        if (activeItem.type === 'section') {
-            return (
-                <div className="glass-card p-4 mb-4 border border-white/10 cursor-grabbing shadow-2xl opacity-90 scale-105">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <span className="p-2 bg-white/5 rounded-lg text-slate-400">
-                                <Grid size={20} />
-                            </span>
-                            <div>
-                                <h3 className="text-xl font-bold">{activeItem.title}</h3>
-                                <p className="text-slate-400 text-sm">
-                                    {(activeItem.problems || []).length} Challenges
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        if (activeItem.type === 'problem') {
-            return (
-                <div className="glass-card p-4 border border-white/10 cursor-grabbing shadow-2xl opacity-90 scale-105 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <span className={`px-2 py-0.5 rounded text-xs px-2 py-1 rounded-full text-xs font-bold border ${getDifficultyColor(activeItem.difficulty)}`}>
-                            {activeItem.difficulty}
-                        </span>
-                        <span className="font-medium text-slate-200">{activeItem.title}</span>
-                    </div>
-                </div>
-            );
-        }
-        return null;
-    };
-
-
-    // --- ACTIONS ---
-
-    const handleCreatePattern = async (e) => {
-        e.preventDefault();
-        setSubmitting(true);
-        try {
-            await listService.createSection(list._id, newPatternTitle);
-            await fetchList();
-            setIsPatternModalOpen(false);
-            setNewPatternTitle('');
-        } catch (err) {
-            alert(err.response?.data?.message || "Failed to add pattern.");
-        } finally {
-            setSubmitting(false);
-        }
-    };
-
-    const handleAddProblem = async (e) => {
-        e.preventDefault();
-        if (!selectedSection) return;
-        setSubmitting(true);
-        try {
-            await listService.addProblemToList(list._id, selectedSection, newProblem);
-            await fetchList();
-            setIsProblemModalOpen(false);
-            setNewProblem({ title: '', url: '', platform: 'LeetCode', difficulty: 'Medium' });
-        } catch (err) {
-            alert(err.response?.data?.message || "Failed to add problem.");
-        } finally {
-            setSubmitting(false);
-        }
-    };
-
-    const openDeleteModal = (type, sectionId, problemId = null) => {
-        setDeleteModal({ open: true, type, sectionId, problemId });
-        // Pre-fill password if user knows it? No, keep empty as requested, just display what it is.
-        setDeletePassword('');
-        setVerifyError('');
-    };
-
-    const confirmDelete = async (e) => {
-        e.preventDefault();
-        try {
-            if (deleteModal.type === 'section') {
-                await listService.deleteSection(list._id, deleteModal.sectionId, deletePassword);
-            } else {
-                await listService.deleteProblem(list._id, deleteModal.sectionId, deleteModal.problemId);
-            }
-            setDeleteModal({ open: false, type: null, sectionId: null, problemId: null });
-            fetchList();
-        } catch (err) {
-            setVerifyError(err.response?.data?.message || "Incorrect Password or Failed");
-        }
-    };
-
-    const handleToggleCompletion = async (sectionId, problemId, e) => {
-        e.stopPropagation();
-        try {
-            const updatedSections = list.sections.map(section => {
-                if (section._id === sectionId) {
-                    return {
-                        ...section,
-                        problems: section.problems.map(p => {
-                            if (p._id === problemId) {
-                                return { ...p, isCompleted: !p.isCompleted };
-                            }
-                            return p;
-                        })
-                    };
-                }
-                return section;
-            });
-            setList({ ...list, sections: updatedSections });
-            await listService.toggleProblemCompletion(list._id, sectionId, problemId);
-        } catch (err) {
-            fetchList();
-        }
-    };
-
-    const handleIncrementRevision = async (sectionId, problemId, e) => {
-        e.stopPropagation();
-        try {
-            // Optimistic Update
-            const updatedSections = list.sections.map(section => {
-                if (section._id === sectionId) {
-                    return {
-                        ...section,
-                        problems: section.problems.map(p => {
-                            if (p._id === problemId) {
-                                return { ...p, revision_count: (p.revision_count || 0) + 1 };
-                            }
-                            return p;
-                        })
-                    };
-                }
-                return section;
-            });
-            setList({ ...list, sections: updatedSections });
-
-            await listService.incrementRevision(list._id, sectionId, problemId);
         } catch (err) {
             console.error(err);
-            fetchList();
+            setError(`Failed to load ${listName}`);
+        } finally {
+            setLoading(false);
         }
     };
 
-    if (loading) return (
+    const handleBackToDashboard = () => {
+        setViewMode('dashboard');
+        setList(null);
+        setCurrentListId(null);
+        fetchAllLists(); // Refresh metadata
+    };
+
+    const handleSeedFamousLists = async () => {
+        if (!confirm("This will seed/update NeetCode 150 and Striver's A2Z. Continue?")) return;
+        setSubmitting(true);
+        try {
+            // We need a service method for this, or call directly
+            const token = localStorage.getItem('token');
+            await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/lists/seed-famous`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            alert("Lists seeded successfully!");
+            fetchAllLists();
+        } catch (err) {
+            alert("Seeding failed: " + (err.response?.data?.message || err.message));
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    if (loading && !list && allLists.length === 0) return (
         <div className="min-h-screen bg-[#030014] flex items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-fuchsia-500"></div>
         </div>
@@ -549,8 +306,82 @@ const CuratedListsPage = () => {
         </div>
     );
 
-    if (!list) return null;
+    // --- DASHBOARD VIEW ---
+    if (viewMode === 'dashboard') {
+        return (
+            <div className="min-h-screen bg-[#030014] text-white p-6 md:p-12 font-sans selection:bg-fuchsia-500/30 overflow-hidden relative">
+                <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-[-20%] left-[20%] w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[120px]" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-fuchsia-600/10 rounded-full blur-[120px]" />
+                </div>
 
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="text-center mb-16">
+                        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="inline-block">
+                            <h1 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-slate-400 mb-6 tracking-tight drop-shadow-2xl">
+                                Curated Sheets
+                            </h1>
+                            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                                Select a roadmap to start your mastery journey. From community favorites to custom lists.
+                            </p>
+                        </motion.div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {allLists.map((l, idx) => (
+                            <motion.div
+                                key={l._id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.1 }}
+                                onClick={() => handleSelectList(l.name)}
+                                className="group relative bg-[#0e0e12]/60 border border-white/5 hover:border-violet-500/50 rounded-3xl p-8 cursor-pointer overflow-hidden backdrop-blur-sm transition-all duration-300 hover:shadow-2xl hover:shadow-violet-900/20 hover:-translate-y-2"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-br from-violet-600/5 to-fuchsia-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                <div className="relative z-10">
+                                    <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                        {l.name.includes('NeetCode') ? <Sparkles className="text-yellow-400" size={28} /> :
+                                            l.name.includes('Striver') ? <Trophy className="text-orange-400" size={28} /> :
+                                                <Layers className="text-violet-400" size={28} />}
+                                    </div>
+
+                                    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-violet-200 transition-colors">{l.name}</h3>
+                                    <p className="text-slate-400 text-sm mb-6 line-clamp-2">{l.description || 'No description available.'}</p>
+
+                                    <div className="flex items-center justify-between mt-auto">
+                                        <div className="text-xs font-semibold text-slate-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                                            OPEN SHEET
+                                        </div>
+                                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-violet-600 group-hover:text-white transition-all">
+                                            <ArrowUp className="rotate-90" size={14} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+
+                        {/* Seed Button for Admin */}
+                        {isAdmin && (
+                            <motion.div
+                                onClick={handleSeedFamousLists}
+                                className="group relative bg-dashed border-2 border-white/10 hover:border-green-500/50 rounded-3xl p-8 cursor-pointer flex flex-col items-center justify-center text-center transition-all hover:bg-green-500/5"
+                            >
+                                <div className="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    {submitting ? <div className="animate-spin h-6 w-6 border-2 border-green-500 rounded-full border-t-transparent" /> : <RefreshCw className="text-green-500" size={24} />}
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-300 group-hover:text-green-400">Sync Famous Sheets</h3>
+                                <p className="text-slate-500 text-xs mt-2">Admin: Fetch latest NeetCode/Striver data</p>
+                            </motion.div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // --- LIST VIEW (Existing UI wrapped) ---
+    // Calculate stats
     let total = 0, solved = 0;
     list.sections.forEach(s => s.problems.forEach(p => {
         total++;
@@ -566,12 +397,21 @@ const CuratedListsPage = () => {
             </div>
 
             <div className="max-w-6xl mx-auto relative z-10">
-                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-14 text-center">
+                {/* Header with Back Button */}
+                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-10 text-center relative">
+                    <button
+                        onClick={handleBackToDashboard}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all flex items-center gap-2 group"
+                    >
+                        <ArrowUp className="-rotate-90 group-hover:-translate-x-1 transition-transform" size={18} />
+                        <span className="hidden sm:inline text-sm font-medium">All Sheets</span>
+                    </button>
+
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md shadow-[0_0_15px_rgba(168,85,247,0.15)]">
                         <Sparkles size={14} className="text-yellow-300" />
                         <span className="text-xs font-semibold text-slate-200 tracking-widest uppercase">Official DSA Curriculum</span>
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-slate-400 mb-6 tracking-tight drop-shadow-2xl">
+                    <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-slate-400 mb-2 tracking-tight drop-shadow-2xl">
                         {list.name}
                     </h1>
                 </motion.div>

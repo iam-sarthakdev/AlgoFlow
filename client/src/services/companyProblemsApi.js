@@ -21,9 +21,15 @@ export const fetchCompanyProblems = async (filters = {}) => {
     const queryString = params.toString();
 
     // If company is specified, fetch for that company. Otherwise fetch ALL problems.
+
+    // Use generic endpoint but pass company as query param for robustness
+    // Ideally we use the specific route, but this covers cases where filters might be mixed
     let url;
     if (filters.company) {
-        url = `${API_URL}/company-problems/companies/${encodeURIComponent(filters.company)}/problems${queryString ? `?${queryString}` : ''}`;
+        // Force company param into query string even if using specific route
+        if (!params.has('company')) params.append('company', filters.company);
+        const qs = params.toString();
+        url = `${API_URL}/company-problems/companies/${encodeURIComponent(filters.company)}/problems${qs ? `?${qs}` : ''}`;
     } else {
         url = `${API_URL}/company-problems/problems${queryString ? `?${queryString}` : ''}`;
     }

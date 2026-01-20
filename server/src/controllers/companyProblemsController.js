@@ -53,6 +53,11 @@ export const getAllCompanyProblems = async (req, res) => {
 
         const query = {};
 
+        // Support company filter via query param
+        if (req.query.company) {
+            query.companies = req.query.company;
+        }
+
         if (difficulty) {
             query.difficulty = difficulty;
         }

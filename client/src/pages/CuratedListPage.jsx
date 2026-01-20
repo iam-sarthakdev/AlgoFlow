@@ -253,7 +253,7 @@ const CuratedListsPage = () => {
 
     // DnD Sensors
     const sensors = useSensors(
-        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }), // Better for click vs drag
+        useSensor(PointerSensor, { activationConstraint: { distance: 5 } }), // Reduced distance for easier drag start
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
     const [activeId, setActiveId] = useState(null); // For drag overlay
@@ -307,12 +307,30 @@ const CuratedListsPage = () => {
     // --- DnD HANDLERS ---
 
     const handleDragStart = (event) => {
-        setActiveId(event.active.id);
+        const { active } = event;
+        setActiveId(active.id);
+
+        // Find the active item data for the overlay
+        const section = list.sections.find(s => s._id === active.id);
+        if (section) {
+            setActiveItem({ ...section, type: 'section' });
+            return;
+        }
+
+        // Search for problem
+        for (const s of list.sections) {
+            const problem = s.problems.find(p => p._id === active.id);
+            if (problem) {
+                setActiveItem({ ...problem, type: 'problem' });
+                break;
+            }
+        }
     };
 
     const handleDragEnd = async (event) => {
         const { active, over } = event;
         setActiveId(null);
+        setActiveItem(null);
 
         if (!over) return;
 
@@ -371,6 +389,45 @@ const CuratedListsPage = () => {
             }
         }
 
+    };
+
+    // New DragOverlay logic
+    const renderDragOverlay = () => {
+        if (!activeItem) return null;
+
+        if (activeItem.type === 'section') {
+            return (
+                <div className="glass-card p-4 mb-4 border border-white/10 cursor-grabbing shadow-2xl opacity-90 scale-105">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <span className="p-2 bg-white/5 rounded-lg text-slate-400">
+                                <Grid size={20} />
+                            </span>
+                            <div>
+                                <h3 className="text-xl font-bold">{activeItem.title}</h3>
+                                <p className="text-slate-400 text-sm">
+                                    {(activeItem.problems || []).length} Challenges
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        if (activeItem.type === 'problem') {
+            return (
+                <div className="glass-card p-4 border border-white/10 cursor-grabbing shadow-2xl opacity-90 scale-105 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <span className={`px-2 py-0.5 rounded text-xs px-2 py-1 rounded-full text-xs font-bold border ${getDifficultyColor(activeItem.difficulty)}`}>
+                            {activeItem.difficulty}
+                        </span>
+                        <span className="font-medium text-slate-200">{activeItem.title}</span>
+                    </div>
+                </div>
+            );
+        }
+        return null;
     };
 
 
@@ -640,6 +697,9 @@ const CuratedListsPage = () => {
                             ))}
                         </div>
                     </SortableContext>
+                    <DragOverlay>
+                        {renderDragOverlay()}
+                    </DragOverlay>
                 </DndContext>
             </div>
 

@@ -57,7 +57,8 @@ export const createProblem = async (req, res, next) => {
 export const getAllProblems = async (req, res, next) => {
     try {
         const userId = req.user.userId;
-        const { topic, difficulty, status, sort = 'createdAt', order = 'desc' } = req.query;
+        const { topic, difficulty, status, sort = 'createdAt', order = 'desc', page = 1, limit = 50 } = req.query;
+        const skip = (page - 1) * limit;
 
         // Build filter - always filter by user_id
         // Build filter - always filter by user_id
@@ -84,7 +85,14 @@ export const getAllProblems = async (req, res, next) => {
         const sortField = sort === 'created_at' ? 'createdAt' : sort;
         const sortObj = { [sortField]: sortOrder };
 
-        const problems = await Problem.find(filter).sort(sortObj);
+
+
+        const problems = await Problem.find(filter)
+            .sort(sortObj)
+            .skip(Number(skip))
+            .limit(Number(limit));
+
+        const totalProblems = await Problem.countDocuments(filter);
         console.log(`[DEBUG] Found ${problems.length} problems for user ${userId}`);
 
         // Debug first problem with companies

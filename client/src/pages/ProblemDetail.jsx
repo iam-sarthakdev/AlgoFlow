@@ -200,92 +200,7 @@ const ProblemDetail = () => {
         }
     };
 
-    const handleAutoPopulateFromLeetCode = async () => {
-        try {
-            setIsLoadingLeetCode(true);
-            setLeetCodeError('');
 
-            let formattedNotes;
-
-            // Robust Fetch Logic:
-            // 1. Try URL if it looks valid
-            // 2. If URL fails (or isn't there), try Title
-
-            if (formData.url && formData.url.includes('leetcode.com')) {
-                try {
-                    formattedNotes = await autoPopulateNotes(formData.url);
-                } catch (err) {
-                    console.warn('Fetch with URL failed, trying Title as fallback...', err);
-
-                    if (formData.title) {
-                        // If URL failed (maybe truncated), try the Title
-                        try {
-                            formattedNotes = await autoPopulateNotes(formData.title);
-                        } catch (titleErr) {
-                            // If title also fails, throw the original error (usually more descriptive) or a combined one
-                            throw new Error(`Failed to fetch. verified URL is invalid and Title search failed.`);
-                        }
-                    } else {
-                        throw err;
-                    }
-                }
-            } else if (formData.title) {
-                // No URL, just use title
-                formattedNotes = await autoPopulateNotes(formData.title);
-            } else {
-                throw new Error('Please add a problem title or LeetCode URL first');
-            }
-
-            // Append to existing notes if they exist, or replace
-            const newNotes = formData.notes
-                ? formData.notes + '\n\n---\n\n' + formattedNotes
-                : formattedNotes;
-
-            const updatedFormData = {
-                ...formData,
-                notes: newNotes
-            };
-
-            setFormData(updatedFormData);
-
-            setShowLeetCodeButton(false);
-
-            // AUTO-SAVE LOGIC
-            // If it's a new problem and we have the basics, try to create it immediately
-            if (id === 'new') {
-                if (updatedFormData.title && updatedFormData.topic && updatedFormData.difficulty) {
-                    setSubmitting(true);
-                    setSaveStatus('saving');
-                    try {
-                        const newProblem = await createProblem(updatedFormData);
-                        setSaveStatus('saved');
-                        // Navigate to the created problem to "permanently" lock it in
-                        navigate(`/problems/${newProblem.id}`, { replace: true });
-                    } catch (createErr) {
-                        console.error('Auto-create failed:', createErr);
-                        setSaveStatus('error');
-                        setLeetCodeError('fetched data but failed to auto-save to DB. Please click "Create Problem".');
-                    } finally {
-                        setSubmitting(false);
-                    }
-                } else {
-                    setLeetCodeError('Fetched! Please fill Topic/Difficulty and click Create.');
-                }
-            } else {
-                // For existing problem, force an update immediately
-                setSaveStatus('saving');
-                await updateProblem(id, updatedFormData);
-                setSaveStatus('saved');
-                setTimeout(() => setSaveStatus(''), 2000);
-            }
-
-        } catch (error) {
-            console.error('Failed to fetch from LeetCode:', error);
-            setLeetCodeError(error.message || 'Failed to fetch from LeetCode. Please check the problem title/URL.');
-        } finally {
-            setIsLoadingLeetCode(false);
-        }
-    };
 
 
 
@@ -649,31 +564,7 @@ const ProblemDetail = () => {
                             {activeTab === 'notes' ? (
                                 <div className="w-full h-full flex flex-col">
                                     {/* LeetCode Auto-populate Button */}
-                                    {showLeetCodeButton && (
-                                        <div className="p-4 border-b border-white/10 bg-[#1E1E1E] flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <Sparkles size={16} className="text-primary" />
-                                                <span className="text-sm text-white/70">Auto-populate from LeetCode</span>
-                                            </div>
-                                            <button
-                                                onClick={handleAutoPopulateFromLeetCode}
-                                                disabled={isLoadingLeetCode}
-                                                className="px-4 py-2 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/50 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                                            >
-                                                {isLoadingLeetCode ? (
-                                                    <>
-                                                        <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-primary"></div>
-                                                        Loading...
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Sparkles size={14} />
-                                                        Fetch from LeetCode
-                                                    </>
-                                                )}
-                                            </button>
-                                        </div>
-                                    )}
+
                                     {leetCodeError && (
                                         <div className="px-4 py-2 bg-red-500/10 border-b border-red-500/20 text-red-400 text-sm">
                                             {leetCodeError}

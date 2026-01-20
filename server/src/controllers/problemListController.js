@@ -1,6 +1,4 @@
-import { ProblemList } from '../models/index.js';
-
-import { ProblemList, User } from '../models/index.js';
+import { ProblemList, Revision, User, Problem } from '../models/index.js';
 
 const checkAdmin = async (userId) => {
     const user = await User.findById(userId);
@@ -199,13 +197,31 @@ export const incrementProblemRevision = async (req, res) => {
         if (!problem) return res.status(404).json({ message: 'Problem not found' });
 
         problem.revision_count = (problem.revision_count || 0) + 1;
+
+        // Mark as modified to ensure persistence
+        list.markModified('sections');
         await list.save();
+
+        // Sync with global Revision history if linked
+        if (problem.problemRef) {
+            try {
+                await Revision.create({
+                    user_id: req.user.userId,
+                    problem_id: problem.problemRef,
+                    notes: 'Quick Revision from List'
+                });
+            } catch (err) {
+                console.warn('Failed to sync global revision:', err.message);
+            }
+        }
 
         res.status(200).json(list);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
+
 
 // Hardcoded list data for seeding
 const sarthaksList = {

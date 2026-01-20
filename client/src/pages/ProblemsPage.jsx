@@ -25,6 +25,7 @@ const ProblemsPage = () => {
     const [filters, setFilters] = useState(getInitialFilters());
     const [userProblems, setUserProblems] = useState([]);
     const [companyProblems, setCompanyProblems] = useState([]);
+    const [totalCount, setTotalCount] = useState(0); // Add total count state
     const [patterns, setPatterns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
@@ -78,6 +79,7 @@ const ProblemsPage = () => {
                 title: p.problem_name || p.title
             }));
             setUserProblems(mappedUserProblems);
+            setTotalCount(userData.total || mappedUserProblems.length); // Update total count
 
             // Only fetch company problems if explicitly requested or needed, NOT always
             if (showSource === 'company') {
@@ -105,26 +107,7 @@ const ProblemsPage = () => {
         }
     };
 
-    const handleAutoTag = async () => {
-        try {
-            setLoading(true);
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/patterns/auto-tag`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
 
-            if (response.ok) {
-                await loadAllProblems();
-                alert('Auto-tagging complete! Patterns assigned based on topic/title.');
-            }
-        } catch (err) {
-            console.error('Auto-tag failed:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleDelete = async (id) => {
         if (window.confirm('Delete this problem?')) {
@@ -348,7 +331,7 @@ const ProblemsPage = () => {
     );
 
     const stats = {
-        total: filteredProblems.length,
+        total: showSource === 'company' ? filteredProblems.length : totalCount, // Use server total for user/all
         solved: filteredProblems.filter(p => p.isSolved).length,
         revised: filteredProblems.reduce((sum, p) => sum + (p.revision_count || 0), 0)
     };
@@ -382,13 +365,7 @@ const ProblemsPage = () => {
                         </div>
                     </div>
                     <div className="flex gap-3">
-                        <button
-                            onClick={handleAutoTag}
-                            className="hidden md:flex items-center gap-2 px-5 py-3 bg-white/5 hover:bg-white/10 border border-pink-500/30 text-pink-400 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/20"
-                        >
-                            <Sparkles size={18} />
-                            Auto-Tag
-                        </button>
+
                         <button
                             onClick={() => navigate('/problems/new')}
                             className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-105 transition-all duration-300"

@@ -641,6 +641,20 @@ const CuratedListsPage = () => {
                                 </div>
                             </motion.div>
                         ))}
+
+                        {/* Fallback Sync Button for Admin */}
+                        {isAdmin && (
+                            <motion.div
+                                onClick={handleSeedFamousLists}
+                                className="group relative bg-dashed border-2 border-white/10 hover:border-green-500/50 rounded-3xl p-8 cursor-pointer flex flex-col items-center justify-center text-center transition-all hover:bg-green-500/5 min-h-[300px]"
+                            >
+                                <div className="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    {submitting ? <div className="animate-spin h-6 w-6 border-2 border-green-500 rounded-full border-t-transparent" /> : <RefreshCw className="text-green-500" size={24} />}
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-300 group-hover:text-green-400">Sync Sheets</h3>
+                                <p className="text-slate-500 text-xs mt-2">Missing something? Click to fetch NeetCode/Striver lists manually.</p>
+                            </motion.div>
+                        )}
                     </div>
                 </div>
             </div>

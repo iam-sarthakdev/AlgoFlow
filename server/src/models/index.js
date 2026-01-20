@@ -120,3 +120,4 @@ const revisionSchema = new Schema({
 // Models
 export const Problem = mongoose.model('Problem', problemSchema);
 export const Revision = mongoose.model('Revision', revisionSchema);
+export { default as ProblemList } from './ProblemList.js';

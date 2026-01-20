@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
     LayoutDashboard,
     BookOpen,
@@ -17,7 +15,8 @@ import {
     ChevronDown,
     User,
     Menu,
-    X
+    X,
+    Layers // For Custom Lists
 } from 'lucide-react';
 
 const Navigation = () => {
@@ -39,6 +38,7 @@ const Navigation = () => {
         { path: '/problems', label: 'Questions', icon: BookOpen },
         { path: '/fundamentals', label: 'Fundamentals', icon: Cpu },
         { path: '/system-design', label: 'System Design', icon: Network },
+        { path: '/lists/sarthak', label: "Sarthak's List", icon: Layers },
         { path: '/behavioral', label: 'Behavioral', icon: Star },
         { path: '/companies', label: 'Companies', icon: Building2 },
         { path: '/analytics', label: 'Analytics', icon: BarChart3 },

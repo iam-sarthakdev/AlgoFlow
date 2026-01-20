@@ -15,7 +15,9 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { scheduleReminderJob } from './jobs/reminderJob.js';
 
 import seedRoutes from './routes/seedRoutes.js';
+import problemListRoutes from './routes/problemListRoutes.js';
 import CompanyProblem from './models/CompanyProblem.js';
+
 
 // ... imports
 
@@ -41,7 +43,9 @@ app.use('/api/patterns', patternRoutes);
 app.use('/api/system-design', systemDesignRoutes);
 app.use('/api/company-problems', companyProblemsRoutes);
 app.use('/api/content', contentRoutes);
+app.use('/api/lists', problemListRoutes);
 app.use('/api/admin', seedRoutes);
+
 
 // Health check
 app.get('/health', (req, res) => {

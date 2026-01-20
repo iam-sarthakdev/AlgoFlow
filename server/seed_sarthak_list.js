@@ -1,0 +1,222 @@
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import ProblemList from './src/models/ProblemList.js'; // Importing directly from file since index.js export might be tricky with ES modules if not handled perfectly
+
+dotenv.config();
+
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/dsa_revision';
+
+console.log('🔌 Attempting to connect to MongoDB...');
+// Log masked URI for debugging
+const maskedURI = MONGODB_URI.replace(/:([^:@]+)@/, ':****@');
+console.log(`📝 URI: ${maskedURI}`);
+
+// The Data provided by User
+const sarthaksList = {
+    name: "Sarthak's List",
+    description: "Curated list of DSA patterns and problems.",
+    sections: [
+        {
+            title: "Binary Search",
+            problems: [
+                { title: "Binary Search", url: "https://leetcode.com/problems/binary-search/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Search Insert Position", url: "https://leetcode.com/problems/search-insert-position/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Sqrt(x)", url: "https://leetcode.com/problems/sqrtx/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Find Smallest Letter Greater Than Target", url: "https://leetcode.com/problems/find-smallest-letter-greater-than-target/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Find First and Last Position of Element in Sorted Array", url: "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Search in Rotated Sorted Array", url: "https://leetcode.com/problems/search-in-rotated-sorted-array/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Search in Rotated Sorted Array II", url: "https://leetcode.com/problems/search-in-rotated-sorted-array-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Find Minimum in Rotated Sorted Array", url: "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Find Minimum in Rotated Sorted Array II", url: "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Find Peak Element", url: "https://leetcode.com/problems/find-peak-element/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Koko Eating Bananas", url: "https://leetcode.com/problems/koko-eating-bananas/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Find the Smallest Divisor Given a Threshold", url: "https://leetcode.com/problems/find-the-smallest-divisor-given-a-threshold/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Capacity To Ship Packages Within D Days", url: "https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Minimum Days to Make m Bouquets", url: "https://leetcode.com/problems/minimum-days-to-make-m-bouquets/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Split Array Largest Sum", url: "https://leetcode.com/problems/split-array-largest-sum/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Maximum Tastiness of Candy Basket", url: "https://leetcode.com/problems/maximum-tastiness-of-candy-basket/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Minimum Speed to Arrive on Time", url: "https://leetcode.com/problems/minimum-speed-to-arrive-on-time/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Maximum Candies Allocated to K Children", url: "https://leetcode.com/problems/maximum-candies-allocated-to-k-children/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Successful Pairs of Spells and Potions", url: "https://leetcode.com/problems/successful-pairs-of-spells-and-potions/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Count Complete Tree Nodes", url: "https://leetcode.com/problems/count-complete-tree-nodes/", platform: "LeetCode", difficulty: "Medium" }
+            ]
+        },
+        {
+            title: "Two Pointers",
+            problems: [
+                { title: "Two Sum II - Input Array Is Sorted", url: "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Remove Duplicates from Sorted Array", url: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Move Zeroes", url: "https://leetcode.com/problems/move-zeroes/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Squares of a Sorted Array", url: "https://leetcode.com/problems/squares-of-a-sorted-array/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Reverse String", url: "https://leetcode.com/problems/reverse-string/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Sort Colors", url: "https://leetcode.com/problems/sort-colors/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "3Sum", url: "https://leetcode.com/problems/3sum/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "4Sum", url: "https://leetcode.com/problems/4sum/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Container With Most Water", url: "https://leetcode.com/problems/container-with-most-water/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Remove Nth Node From End of List", url: "https://leetcode.com/problems/remove-nth-node-from-end-of-list/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Middle of the Linked List", url: "https://leetcode.com/problems/middle-of-the-linked-list/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Linked List Cycle", url: "https://leetcode.com/problems/linked-list-cycle/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Intersection of Two Linked Lists", url: "https://leetcode.com/problems/intersection-of-two-linked-lists/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Find the Duplicate Number", url: "https://leetcode.com/problems/find-the-duplicate-number/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Sort Array By Parity", url: "https://leetcode.com/problems/sort-array-by-parity/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Remove Duplicates from Sorted Array II", url: "https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "String Compression", url: "https://leetcode.com/problems/string-compression/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Trapping Rain Water", url: "https://leetcode.com/problems/trapping-rain-water/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Valid Palindrome", url: "https://leetcode.com/problems/valid-palindrome/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Valid Palindrome II", url: "https://leetcode.com/problems/valid-palindrome-ii/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Longest Mountain in Array", url: "https://leetcode.com/problems/longest-mountain-in-array/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Merge Sorted Array", url: "https://leetcode.com/problems/merge-sorted-array/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Is Subsequence", url: "https://leetcode.com/problems/is-subsequence/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Reverse Words in a String", url: "https://leetcode.com/problems/reverse-words-in-a-string/", platform: "LeetCode", difficulty: "Medium" }
+            ]
+        },
+        {
+            title: "Sliding Window",
+            problems: [
+                { title: "Maximum Sum Subarray of Size K", url: "https://practice.geeksforgeeks.org/problems/max-sum-subarray-of-size-k5313/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "First Negative Number in Every Window of Size K", url: "https://practice.geeksforgeeks.org/problems/first-negative-integer-in-every-window-of-size-k3345/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Count Occurrences of Anagrams", url: "https://practice.geeksforgeeks.org/problems/count-occurences-of-anagrams5839/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Sliding Window Maximum", url: "https://leetcode.com/problems/sliding-window-maximum/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Best Time to Buy and Sell Stock", url: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold", url: "https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Maximum Average Subarray I", url: "https://leetcode.com/problems/maximum-average-subarray-i/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Find K-Length Substrings With No Repeated Characters", url: "https://leetcode.com/problems/find-k-length-substrings-with-no-repeated-characters/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Longest Substring Without Repeating Characters", url: "https://leetcode.com/problems/longest-substring-without-repeating-characters/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Longest Substring with At Most K Distinct Characters", url: "https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Minimum Window Substring", url: "https://leetcode.com/problems/minimum-window-substring/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Longest Repeating Character Replacement", url: "https://leetcode.com/problems/longest-repeating-character-replacement/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Fruit Into Baskets", url: "https://leetcode.com/problems/fruit-into-baskets/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Max Consecutive Ones III", url: "https://leetcode.com/problems/max-consecutive-ones-iii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Minimum Size Subarray Sum", url: "https://leetcode.com/problems/minimum-size-subarray-sum/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Subarray Product Less Than K", url: "https://leetcode.com/problems/subarray-product-less-than-k/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Grumpy Bookstore Owner", url: "https://leetcode.com/problems/grumpy-bookstore-owner/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Maximum Points You Can Obtain from Cards", url: "https://leetcode.com/problems/maximum-points-you-can-obtain-from-cards/", platform: "LeetCode", difficulty: "Medium" }
+            ]
+        },
+        {
+            title: "Prefix Sum & Hashing",
+            problems: [
+                { title: "Longest Sub-Array with Sum K", url: "https://practice.geeksforgeeks.org/problems/longest-sub-array-with-sum-k0809/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Subarray Sum Equals K", url: "https://leetcode.com/problems/subarray-sum-equals-k/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Largest Subarray with 0 Sum", url: "https://practice.geeksforgeeks.org/problems/largest-subarray-with-0-sum/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Binary Subarrays With Sum", url: "https://leetcode.com/problems/binary-subarrays-with-sum/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Contiguous Array", url: "https://leetcode.com/problems/contiguous-array/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Subarray Sums Divisible by K", url: "https://leetcode.com/problems/subarray-sums-divisible-by-k/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Continuous Subarray Sum", url: "https://leetcode.com/problems/continuous-subarray-sum/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Longest Consecutive Sequence", url: "https://leetcode.com/problems/longest-consecutive-sequence/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Count Subarrays with XOR as K", url: "https://practice.geeksforgeeks.org/problems/count-subarray-with-given-xor/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Find the Longest Substring Containing Vowels in Even Counts", url: "https://leetcode.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Subarrays with K Different Integers", url: "https://leetcode.com/problems/subarrays-with-k-different-integers/", platform: "LeetCode", difficulty: "Hard" }
+            ]
+        },
+        {
+            title: "Hashmap & String",
+            problems: [
+                { title: "Valid Anagram", url: "https://leetcode.com/problems/valid-anagram/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "First Unique Character in a String", url: "https://leetcode.com/problems/first-unique-character-in-a-string/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Ransom Note", url: "https://leetcode.com/problems/ransom-note/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Group Anagrams", url: "https://leetcode.com/problems/group-anagrams/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Isomorphic Strings", url: "https://leetcode.com/problems/isomorphic-strings/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Word Pattern", url: "https://leetcode.com/problems/word-pattern/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Determine if Two Strings Are Close", url: "https://leetcode.com/problems/determine-if-two-strings-are-close/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Find All Anagrams in a String", url: "https://leetcode.com/problems/find-all-anagrams-in-a-string/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Permutation in String", url: "https://leetcode.com/problems/permutation-in-string/", platform: "LeetCode", difficulty: "Medium" }
+            ]
+        },
+        {
+            title: "Stack & Monotonic Stack",
+            problems: [
+                { title: "Valid Parentheses", url: "https://leetcode.com/problems/valid-parentheses/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Min Stack", url: "https://leetcode.com/problems/min-stack/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Next Greater Element I", url: "https://leetcode.com/problems/next-greater-element-i/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Next Greater Element II", url: "https://leetcode.com/problems/next-greater-element-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Daily Temperatures", url: "https://leetcode.com/problems/daily-temperatures/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Largest Rectangle in Histogram", url: "https://leetcode.com/problems/largest-rectangle-in-histogram/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Remove All Adjacent Duplicates In String", url: "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Decode String", url: "https://leetcode.com/problems/decode-string/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Online Stock Span", url: "https://leetcode.com/problems/online-stock-span/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Longest Valid Parentheses", url: "https://leetcode.com/problems/longest-valid-parentheses/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Asteroid Collision", url: "https://leetcode.com/problems/asteroid-collision/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Simplify Path", url: "https://leetcode.com/problems/simplify-path/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Evaluate Reverse Polish Notation", url: "https://leetcode.com/problems/evaluate-reverse-polish-notation/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Score of Parentheses", url: "https://leetcode.com/problems/score-of-parentheses/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Basic Calculator II", url: "https://leetcode.com/problems/basic-calculator-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Remove K Digits", url: "https://leetcode.com/problems/remove-k-digits/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Sum of Subarray Minimums", url: "https://leetcode.com/problems/sum-of-subarray-minimums/", platform: "LeetCode", difficulty: "Medium" }
+            ]
+        },
+        {
+            title: "Queue & Deque",
+            problems: [
+                { title: "Shortest Subarray with Sum at Least K", url: "https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Design Circular Deque", url: "https://leetcode.com/problems/design-circular-deque/", platform: "LeetCode", difficulty: "Medium" }
+            ]
+        },
+        {
+            title: "Heap / Priority Queue",
+            problems: [
+                { title: "Kth Largest Element in a Stream", url: "https://leetcode.com/problems/kth-largest-element-in-a-stream/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Kth Largest Element in an Array", url: "https://leetcode.com/problems/kth-largest-element-in-an-array/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Last Stone Weight", url: "https://leetcode.com/problems/last-stone-weight/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "K Closest Points to Origin", url: "https://leetcode.com/problems/k-closest-points-to-origin/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Top K Frequent Elements", url: "https://leetcode.com/problems/top-k-frequent-elements/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Sort Characters By Frequency", url: "https://leetcode.com/problems/sort-characters-by-frequency/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Merge k Sorted Lists", url: "https://leetcode.com/problems/merge-k-sorted-lists/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Find Median from Data Stream", url: "https://leetcode.com/problems/find-median-from-data-stream/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Kth Smallest Element in a Sorted Matrix", url: "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Task Scheduler", url: "https://leetcode.com/problems/task-scheduler/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Minimum Cost to Hire K Workers", url: "https://leetcode.com/problems/minimum-cost-to-hire-k-workers/", platform: "LeetCode", difficulty: "Hard" }
+            ]
+        },
+        // Adding other categories similarly...
+        {
+            title: "Trees",
+            problems: [] // User asked for separate sections for these
+        },
+        {
+            title: "Binary Search Tree",
+            problems: []
+        },
+        {
+            title: "Graphs",
+            problems: []
+        },
+        {
+            title: "DP",
+            problems: []
+        },
+        {
+            title: "Matrix",
+            problems: []
+        }
+    ]
+};
+
+async function seedProblemList() {
+    try {
+        await mongoose.connect(MONGODB_URI);
+        console.log('✅ Connected to MongoDB');
+
+        // Check if list exists
+        const existingList = await ProblemList.findOne({ name: sarthaksList.name });
+
+        if (existingList) {
+            console.log('🔄 Updating existing list...');
+            // We can update the sections here if we want to be smarter, but for now let's just replace sections that match or add new ones
+            // For simplicity in this "seed", we'll just overwrite the sections
+            existingList.sections = sarthaksList.sections;
+            await existingList.save();
+        } else {
+            console.log('✨ Creating new list...');
+            await ProblemList.create(sarthaksList);
+        }
+
+        console.log('✅ Sarthak\'s List seeded successfully!');
+        process.exit(0);
+    } catch (error) {
+        console.error('❌ Error seeding list:', error);
+        process.exit(1);
+    }
+}
+
+seedProblemList();

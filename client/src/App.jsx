@@ -19,6 +19,7 @@ import FundamentalsPage from './pages/FundamentalsPage';
 import BehavioralPage from './pages/BehavioralPage';
 import DSAPrepPage from './pages/DSAPrepPage';
 import LeetCodeSettings from './pages/LeetCodeSettings';
+import CuratedListsPage from './pages/CuratedListPage';
 import PageLayout from './components/PageLayout';
 
 import './index.css';
@@ -142,6 +143,13 @@ function AppRoutes() {
                 <ProtectedRoute>
                     <PageLayout>
                         <LeetCodeSettings />
+                    </PageLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/lists/sarthak" element={
+                <ProtectedRoute>
+                    <PageLayout>
+                        <CuratedListsPage />
                     </PageLayout>
                 </ProtectedRoute>
             } />

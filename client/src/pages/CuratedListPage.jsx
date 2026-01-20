@@ -261,15 +261,8 @@ const CuratedListsPage = () => {
                 const seed = async () => {
                     try {
                         console.log("Auto-seeding famous lists...");
-                        const token = localStorage.getItem('token');
-                        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/lists/seed-famous`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}`
-                            }
-                        });
-                        // Silent success, refresh lists
+                        await listService.seedFamousLists();
+                        console.log("Auto-seed successful!");
                         fetchAllLists();
                     } catch (err) {
                         console.error("Auto-seed failed", err);
@@ -327,30 +320,13 @@ const CuratedListsPage = () => {
         if (!confirm("This will seed/update NeetCode 150 and Striver's A2Z. Continue?")) return;
         setSubmitting(true);
         try {
-            // We need a service method for this, or call directly
-            const token = localStorage.getItem('token');
-            // Assuming axios is imported or we can use listService if we add extended method
-            // Ideally should use listService but for now quick fix:
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/lists/seed-famous`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                console.error("Seeding API Error:", data);
-                throw new Error(data.message || "Seeding failed");
-            }
-
+            await listService.seedFamousLists();
             alert("Lists seeded successfully!");
             fetchAllLists();
         } catch (err) {
             console.error("Seeding error:", err);
-            alert("Seeding failed: " + err.message);
+            const errorMessage = err.response?.data?.message || err.message || "Unknown error";
+            alert("Seeding failed: " + errorMessage);
         } finally {
             setSubmitting(false);
         }

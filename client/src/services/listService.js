@@ -80,6 +80,12 @@ const listService = {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         return response.data;
+    },
+    seedFamousLists: async () => {
+        const response = await axios.post(`${API_URL}/lists/seed-famous`, {}, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        return response.data;
     }
 };
 

@@ -46,88 +46,446 @@ Built with a premium glassmorphic UI and enterprise-grade architecture, FAANG Fo
 
 ---
 
-## ✨ Features
+## ✨ Features In-Depth
 
 ### 🧠 **Intelligent Problem Management**
-- **Spaced Repetition Algorithm**: Ebbinghaus forgetting curve-based scheduling
-- **Auto-Pattern Recognition**: ML-based categorization into 14+ patterns (Two Pointers, Sliding Window, etc.)
-- **LeetCode Integration**: Auto-populate problem statements and examples
-- **Revision Tracking**: Monitor solve count, last revised date, and upcoming reminders
-- **Company Database**: Browse problems by specific companies (Google, Amazon, Meta, etc.)
 
-### 📋 **Curated DSA Sheets** *(NEW)*
-| Sheet | Problems | Description |
-|-------|----------|-------------|
-| **Sarthak's List** | Custom | Your personalized curated list with drag-drop reordering |
-| **NeetCode 150** | 150 | The famous Blind 75 + essential patterns for FAANG |
-| **Striver's A2Z** | 455+ | Comprehensive A2Z DSA Course Sheet |
-| **NeetCode All** | 250+ | Complete NeetCode collection covering all patterns |
-| **Love Babbar 450** | 370+ | Famous DSA sheet for cracking FAANG interviews |
+#### Spaced Repetition Algorithm
+Based on the **Ebbinghaus Forgetting Curve**, our algorithm schedules optimal review times:
 
-- **Pattern-Based Organization**: Problems grouped by topics (Arrays, Trees, DP, etc.)
-- **Progress Tracking**: Track completion percentage for each sheet
-- **Sync Functionality**: One-click sync to fetch latest curated sheets
-- **Difficulty Tags**: Easy, Medium, Hard difficulty indicators
+```
+Day 1  → First Revision
+Day 3  → Second Revision  
+Day 7  → Third Revision
+Day 14 → Fourth Revision
+Day 30 → Fifth Revision
+Day 60 → Sixth Revision
+Day 90 → Final Consolidation
+```
 
-### 📊 **Advanced Analytics Dashboard**
-- **Revision Streak**: Gamified daily streak tracking
-- **Topic Distribution**: Visual breakdown by data structures
-- **Difficulty Analysis**: Pie chart of Easy/Medium/Hard problems
-- **Progress Timeline**: Historical revision activity
-- **Performance Metrics**: Solve rate, average time complexity
+**How it works:**
+1. When you mark a problem as "Revised", the system calculates the next optimal review date
+2. Problems appear in your "Upcoming Reminders" based on this schedule
+3. Consistent revision moves problems to longer intervals (strength building)
+4. Missing a revision resets the interval (retention recovery)
 
-### 📚 **Comprehensive System Design**
-- **14 LLD Chapters**: From SOLID principles to advanced design patterns
-- **GRASP Principles**: All 9 object-oriented design guidelines
-- **Real-World Case Studies**: Parking Lot System, Library Management with UML diagrams
-- **Interactive Code Examples**: Syntax-highlighted Java implementations
-- **Premium Markdown Rendering**: Mac-style code blocks, gradient headers
+#### Auto-Pattern Recognition
+The system automatically tags problems with 14+ common DSA patterns:
 
-### 🏢 **Company-Specific Preparation**
-- **20+ Companies**: FAANG + Goldman Sachs, Uber, Airbnb, etc.
-- **2892+ Problems**: Curated company-tagged questions
-- **Tier Badges**: FAANG vs Top Tier classification
-- **Problem Import**: Quickly add company problems to your personal list
+| Pattern | Keywords | Common Problems |
+|---------|----------|-----------------|
+| Two Pointers | "pair", "palindrome", "sorted" | Two Sum, Container With Water |
+| Sliding Window | "substring", "contiguous", "window" | Longest Substring, Max Sum Subarray |
+| Binary Search | "sorted", "rotated", "find" | Search in Rotated Array |
+| BFS/DFS | "path", "level", "traverse" | Word Ladder, Number of Islands |
+| Dynamic Programming | "maximum", "minimum", "ways" | Climbing Stairs, Coin Change |
+| Backtracking | "permutation", "combination", "subset" | N-Queens, Subsets |
 
-### 🎨 **Premium UI/UX**
-- **Glassmorphic Design**: Modern, translucent cards with backdrop blur
-- **Framer Motion Animations**: Smooth, staggered entry animations
-- **Responsive Layout**: Mobile-first, works on all devices
-- **Dark Mode**: Eye-friendly interface for long study sessions
-- **Skeleton Loaders**: Professional loading states
+#### LeetCode Integration
+```javascript
+// Automatic problem fetching
+const fetchProblemDetails = async (leetcodeUrl) => {
+  // Extract problem slug from URL
+  // Query LeetCode GraphQL API
+  // Return: title, description, examples, constraints
+};
+```
 
 ---
 
-## 🛠 Tech Stack
+### 📋 **Curated DSA Sheets**
 
-### **Frontend**
-| Technology | Purpose |
-|------------|---------|
-| **React 18** | UI library with hooks & context |
-| **React Router v6** | Client-side routing |
-| **Framer Motion** | Advanced animations |
-| **Tailwind CSS** | Utility-first styling |
-| **Recharts** | Data visualization |
-| **React Markdown** | Markdown content rendering |
-| **Syntax Highlighter** | Code block syntax highlighting |
-| **Lucide Icons** | Modern icon library |
+#### Available Sheets
 
-### **Backend**
-| Technology | Purpose |
-|------------|---------|
-| **Node.js** | Runtime environment |
-| **Express.js** | REST API framework |
-| **MongoDB** | NoSQL database |
-| **Mongoose** | ODM for MongoDB |
-| **JWT** | Authentication |
-| **Bcrypt** | Password hashing |
-| **Axios** | HTTP client for LeetCode API |
+##### 1. NeetCode 150 (150 Problems)
+The gold standard for FAANG preparation, covering:
+- Arrays & Hashing (9 problems)
+- Two Pointers (5 problems)
+- Sliding Window (6 problems)
+- Stack (7 problems)
+- Binary Search (7 problems)
+- Linked List (11 problems)
+- Trees (15 problems)
+- Heap/Priority Queue (7 problems)
+- Backtracking (9 problems)
+- Tries (3 problems)
+- Graphs (13 problems)
+- Advanced Graphs (6 problems)
+- 1-D Dynamic Programming (12 problems)
+- 2-D Dynamic Programming (11 problems)
+- Greedy (8 problems)
+- Intervals (6 problems)
+- Math & Geometry (8 problems)
+- Bit Manipulation (7 problems)
 
-### **Deployment & DevOps**
-| Service | Purpose |
-|---------|---------|
-| **Vercel** | Frontend hosting |
-| **Render** | Backend hosting |
+##### 2. Striver's A2Z DSA Course (455+ Problems)
+Complete A2Z roadmap covering:
+- Basics → Arrays → Strings → Recursion → Backtracking
+- Binary Search → Linked List → Stacks & Queues
+- Trees → Graphs → Dynamic Programming
+
+##### 3. NeetCode All (250 Problems)
+Extended collection beyond Blind 75:
+- Additional medium/hard problems by pattern
+- Interview favorites from top companies
+- Edge cases and variations
+
+##### 4. Love Babbar 450 (370+ Problems)
+Famous sheet for Indian placement season:
+- Arrays, Matrix, Strings, Searching & Sorting
+- Linked List, Binary Trees, BST, Heaps
+- Graphs, Stack & Queues, DP, Backtracking
+
+#### Custom List (Sarthak's List)
+Your personalized collection with:
+- **Drag-and-Drop Reordering**: Prioritize problems you want to focus on
+- **Pattern Sections**: Organize by DSA pattern
+- **Progress Tracking**: Mark problems as complete
+- **Notes Integration**: Add personal notes to each problem
+
+---
+
+### 📊 **Advanced Analytics Dashboard**
+
+#### Metrics Tracked
+
+| Metric | Description | Visualization |
+|--------|-------------|---------------|
+| **Total Problems** | All problems in your list | Counter card |
+| **Solved** | Problems marked as complete | Counter with percentage |
+| **Current Streak** | Consecutive days with revisions | Flame icon + counter |
+| **Active Reminders** | Problems due for review | Clock icon + counter |
+
+#### Visualizations
+
+**Weekly Activity Chart**: Bar chart showing problems revised per day
+```
+Mon: ████ (8)
+Tue: ██ (4)
+Wed: ██████ (12)
+Thu: ███ (6)
+Fri: ███████ (14)
+Sat: █ (2)
+Sun: ████ (8)
+```
+
+**Difficulty Breakdown**: Pie chart with Easy (Green), Medium (Yellow), Hard (Red)
+
+**Topic Distribution**: Bar chart of problems per data structure
+
+---
+
+### 🏢 **Company-Specific Preparation**
+
+#### Company Database Statistics
+
+| Tier | Companies | Total Problems |
+|------|-----------|----------------|
+| **FAANG** | Google, Amazon, Meta, Apple, Netflix, Microsoft | 4,200+ |
+| **Top Tier** | Uber, Airbnb, LinkedIn, Twitter, Salesforce | 2,100+ |
+| **Fintech** | Goldman Sachs, Bloomberg, DE Shaw, Citadel | 1,400+ |
+
+#### Features
+- **Company Search**: Find any company instantly
+- **Problem Filtering**: Filter by difficulty within each company
+- **Quick Import**: One-click add to your personal list
+- **Tag Badges**: FAANG (gold) vs Top Tier (silver) indicators
+
+---
+
+### 📚 **CS Fundamentals (Core Subjects)**
+
+#### Operating Systems
+| # | Chapter | Topics Covered |
+|---|---------|----------------|
+| 1 | Introduction | OS goals, types, architecture |
+| 2 | Process Management | Process states, PCB, context switching |
+| 3 | CPU Scheduling | FCFS, SJF, RR, Priority, MLFQ |
+| 4 | Synchronization | Race conditions, mutex, semaphores |
+| 5 | Deadlocks | Prevention, avoidance, detection |
+| 6 | Memory Management | Paging, segmentation, virtual memory |
+| 7 | Virtual Memory | Page replacement, thrashing |
+| 8 | Disk Management | Scheduling algorithms, RAID |
+
+#### DBMS
+- Relational Model, SQL, Normalization
+- Transactions, ACID, Concurrency Control
+- Indexing, Query Optimization
+
+#### Networks
+- OSI Model, TCP/IP, HTTP/HTTPS
+- Routing Protocols, DNS, Load Balancing
+
+---
+
+### 🏗️ **System Design (HLD/LLD)**
+
+#### High-Level Design Topics
+- Performance vs Scalability
+- CAP Theorem, Consistency Patterns
+- Load Balancers, CDN, Caching
+- Database Sharding, Replication
+- Message Queues, Microservices
+
+#### Low-Level Design Topics
+| Chapter | Topic |
+|---------|-------|
+| 1 | Introduction to LLD |
+| 2-6 | SOLID Principles (SRP, OCP, LSP, ISP, DIP) |
+| 7-15 | GRASP Principles |
+| 13 | Case Study: Parking Lot System |
+| 14 | Case Study: Library Management |
+
+---
+
+### 🎨 **Premium UI/UX Design**
+
+#### Design Philosophy
+We follow a **Glassmorphic Dark Theme** with:
+
+```css
+/* Core design tokens */
+--glass-bg: rgba(255, 255, 255, 0.05);
+--glass-border: rgba(255, 255, 255, 0.1);
+--blur: backdrop-blur(10px);
+--gradient-accent: linear-gradient(135deg, #6366f1, #8b5cf6);
+```
+
+#### Animation Principles
+- **Staggered Entry**: Cards appear sequentially (100ms delay)
+- **Spring Physics**: Natural, bouncy hover effects
+- **Exit Animations**: Smooth fade-out when removing elements
+
+#### Accessibility
+- Keyboard navigation support
+- Screen reader friendly labels
+- Color contrast ratios > 4.5:1
+- Focus indicators on interactive elements
+
+---
+
+## 🛠 Tech Stack & Architecture Decisions
+
+### **Why MERN Stack?**
+
+We chose the **MERN stack** (MongoDB, Express.js, React, Node.js) for several strategic reasons:
+
+| Factor | Benefit |
+|--------|---------|
+| **JavaScript Everywhere** | Single language across frontend and backend reduces context switching |
+| **JSON Native** | MongoDB stores JSON-like documents, React uses JSON, seamless data flow |
+| **NPM Ecosystem** | Access to millions of packages for rapid development |
+| **Real-time Capable** | Node.js event-driven model supports future real-time features |
+| **Industry Standard** | MERN skills are highly demanded in FAANG interviews |
+
+---
+
+### **Frontend Technologies**
+
+#### **React 18** - UI Library
+```
+Why React over Vue/Angular?
+├── Component-based architecture for reusability
+├── Virtual DOM for optimal performance
+├── Largest ecosystem and community support
+├── Hooks API for cleaner state management
+└── Easy integration with other libraries
+```
+
+**Key Features Used:**
+- `useState`, `useEffect`, `useContext` hooks
+- Custom hooks for API calls and authentication
+- React.memo for performance optimization
+- Suspense for code splitting
+
+#### **React Router v6** - Client-Side Routing
+- **Nested Routes**: Clean URL structure (`/problems/:id`)
+- **Protected Routes**: Authentication-based access control
+- **useNavigate**: Programmatic navigation after form submissions
+- **useLocation**: Access current URL params for deep linking
+
+#### **Framer Motion** - Animation Library
+```javascript
+// Example: Staggered card animations
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+```
+**Why Framer Motion?**
+- Declarative animations with React integration
+- Physics-based spring animations
+- AnimatePresence for exit animations
+- Layout animations for smooth transitions
+
+#### **Tailwind CSS** - Styling
+**Why Tailwind over CSS-in-JS or Sass?**
+| Approach | Tailwind Advantage |
+|----------|-------------------|
+| Traditional CSS | No naming conflicts, no separate files |
+| CSS Modules | Faster development with utility classes |
+| Styled Components | Smaller bundle size, no runtime overhead |
+
+**Custom Extensions:**
+- Glassmorphic card effects with `backdrop-blur`
+- Custom color palette for dark mode
+- Responsive breakpoints for mobile-first design
+
+#### **Recharts** - Data Visualization
+- Built specifically for React (not a wrapper)
+- Composable chart components
+- Responsive container support
+- Smooth animations out of the box
+
+Used for:
+- Weekly activity line charts
+- Difficulty distribution pie charts
+- Topic breakdown bar charts
+
+#### **@dnd-kit** - Drag and Drop
+- Lightweight alternative to react-beautiful-dnd
+- Accessibility built-in (keyboard support)
+- Smooth animations during drag
+- Sortable lists for problem reordering
+
+---
+
+### **Backend Technologies**
+
+#### **Node.js** - Runtime Environment
+```
+Why Node.js?
+├── Non-blocking I/O for handling concurrent requests
+├── Same language as frontend (JavaScript)
+├── Excellent for I/O-heavy operations (database, API calls)
+├── NPM package ecosystem
+└── Easy deployment on modern platforms
+```
+
+#### **Express.js** - Web Framework
+**Middleware Architecture:**
+```javascript
+// Request Flow
+Request → cors() → json() → authenticate() → Route Handler → Response
+```
+
+**Key Middleware Used:**
+- `express.json()` - Parse JSON bodies
+- `cors` - Cross-Origin Resource Sharing
+- Custom `authenticate` - JWT verification
+- Error handling middleware - Centralized error responses
+
+#### **MongoDB** - Database
+**Why NoSQL over SQL?**
+| Factor | MongoDB Advantage |
+|--------|------------------|
+| **Schema Flexibility** | Problems can have varying fields (hints, companies, patterns) |
+| **JSON Storage** | Direct mapping to JavaScript objects |
+| **Horizontal Scaling** | Easy sharding for future growth |
+| **Aggregation Pipeline** | Powerful analytics queries |
+| **Document Relationships** | Embedded documents for related data |
+
+**Collections Structure:**
+```
+faang-forge-db/
+├── users              # User accounts and preferences
+├── problems           # User's personal problem list
+├── companyproblems    # Shared company-tagged problems (7700+)
+├── problemlists       # Curated sheets (NeetCode, Striver, etc.)
+├── revisions          # Revision history for spaced repetition
+└── patterns           # DSA pattern definitions
+```
+
+#### **Mongoose** - ODM (Object Document Mapper)
+```javascript
+// Schema with validation, virtuals, and middleware
+const problemSchema = new Schema({
+  title: { type: String, required: true, maxlength: 200 },
+  difficulty: { type: String, enum: ['Easy', 'Medium', 'Hard'] },
+  patterns: [{ type: String }],  // Array of pattern tags
+  next_reminder_date: Date,      // Spaced repetition
+  revision_count: { type: Number, default: 0 }
+}, { timestamps: true });
+```
+
+**Features Used:**
+- Schema validation
+- Pre/post hooks for password hashing
+- Virtual properties
+- Population for references
+- Aggregation pipelines
+
+#### **JWT (JSON Web Tokens)** - Authentication
+```
+Authentication Flow:
+1. User logs in with email/password
+2. Server validates credentials
+3. Server generates JWT with userId
+4. Client stores JWT in localStorage
+5. Client sends JWT in Authorization header
+6. Server middleware verifies JWT on protected routes
+```
+
+**Token Structure:**
+```javascript
+{
+  userId: "ObjectId",
+  email: "user@example.com",
+  iat: 1234567890,
+  exp: 1234567890 + 7 days
+}
+```
+
+#### **Bcrypt** - Password Security
+- Salted hashing (prevents rainbow table attacks)
+- Configurable work factor (10 rounds)
+- Async operations (non-blocking)
+
+---
+
+### **Deployment Infrastructure**
+
+#### **Vercel** - Frontend Hosting
+**Why Vercel?**
+- Zero-config deployment for React/Vite
+- Global CDN for fast asset delivery
+- Automatic HTTPS
+- Preview deployments for PRs
+- Environment variable management
+
+**Build Settings:**
+```
+Framework: Vite
+Build Command: npm run build
+Output Directory: dist
+```
+
+#### **Render** - Backend Hosting
+**Why Render over Heroku?**
+- Free tier without cold starts (paid)
+- Native Docker support
+- Automatic deploys from GitHub
+- Built-in environment variables
+- Health checks and auto-restart
+
+**Configuration:**
+```yaml
+Build Command: npm install
+Start Command: npm start
+Health Check Path: /api/health
+```
+
+#### **MongoDB Atlas** - Cloud Database
+- Free 512MB cluster
+- Automatic backups
+- Global regions for low latency
+- Built-in monitoring
+- IP whitelisting for security
+
+---
 | **MongoDB Atlas** | Cloud database |
 | **Git & GitHub** | Version control |
 
@@ -332,53 +690,404 @@ FAANG-Forge/
 
 ## 📡 API Documentation
 
-### **Authentication**
+### **Base URL**
+- **Production**: `https://faang-forge-api.onrender.com`
+- **Development**: `http://localhost:5000`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Create new user account |
-| POST | `/api/auth/login` | Login user & return JWT |
-| POST | `/api/auth/logout` | Logout user |
-| GET | `/api/auth/me` | Get current user profile |
+### **Authentication Headers**
+```javascript
+// All protected routes require this header
+{
+  "Authorization": "Bearer <JWT_TOKEN>",
+  "Content-Type": "application/json"
+}
+```
 
-### **Problems**
+---
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/problems` | Get all user problems (with filters) |
-| POST | `/api/problems` | Create new problem |
-| GET | `/api/problems/:id` | Get problem by ID |
-| PUT | `/api/problems/:id` | Update problem |
-| DELETE | `/api/problems/:id` | Delete problem |
-| POST | `/api/problems/:id/revise` | Mark problem as revised |
+### **Authentication Endpoints**
 
-### **Analytics**
+#### `POST /api/auth/register`
+Create a new user account.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/analytics/stats` | Get overall statistics |
-| GET | `/api/analytics/trends` | Get revision trends (30 days) |
-| GET | `/api/analytics/heatmap` | Get revision heatmap data |
+**Request Body:**
+```json
+{
+  "name": "Sarthak Dev",
+  "email": "user@example.com",
+  "password": "securePassword123"
+}
+```
 
-### **Company Problems**
+**Response (201):**
+```json
+{
+  "success": true,
+  "message": "User registered successfully",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "_id": "507f1f77bcf86cd799439011",
+    "name": "Sarthak Dev",
+    "email": "user@example.com"
+  }
+}
+```
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/company-problems` | Get problems by company |
-| GET | `/api/companies` | Get all companies with problem counts |
+#### `POST /api/auth/login`
+Login with email and password.
 
-### **Patterns**
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "securePassword123"
+}
+```
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/patterns` | Get all available patterns |
-| POST | `/api/patterns/auto-tag` | Auto-tag user problems with patterns |
+**Response (200):**
+```json
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "_id": "507f1f77bcf86cd799439011",
+    "name": "Sarthak Dev",
+    "email": "user@example.com"
+  }
+}
+```
 
-### **LeetCode Integration**
+---
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/leetcode/fetch` | Fetch problem details from LeetCode |
+### **Problems Endpoints**
+
+#### `GET /api/problems`
+Get all user problems with optional filters.
+
+**Query Parameters:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `topic` | string | Filter by topic (Arrays, Trees, etc.) |
+| `difficulty` | string | Filter by Easy/Medium/Hard |
+| `pattern` | string | Filter by DSA pattern |
+| `search` | string | Search in title/topic |
+| `sort` | string | Sort field (createdAt, difficulty) |
+| `order` | string | asc or desc |
+| `page` | number | Page number (default: 1) |
+| `limit` | number | Items per page (default: 200) |
+
+**Response (200):**
+```json
+{
+  "problems": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "title": "Two Sum",
+      "topic": "Arrays",
+      "difficulty": "Easy",
+      "url": "https://leetcode.com/problems/two-sum",
+      "patterns": ["Hash Map", "Two Pointers"],
+      "revision_count": 3,
+      "next_reminder_date": "2026-01-25T00:00:00.000Z"
+    }
+  ],
+  "total": 150,
+  "page": 1,
+  "pages": 1
+}
+```
+
+#### `POST /api/problems`
+Create a new problem.
+
+**Request Body:**
+```json
+{
+  "title": "Two Sum",
+  "url": "https://leetcode.com/problems/two-sum",
+  "topic": "Arrays",
+  "difficulty": "Easy",
+  "notes": "Use hash map for O(n) solution",
+  "patterns": ["Hash Map"],
+  "next_reminder_date": "2026-01-25"
+}
+```
+
+#### `POST /api/problems/:id/revise`
+Mark a problem as revised (updates spaced repetition schedule).
+
+**Spaced Repetition Algorithm:**
+```javascript
+// Revision intervals (Ebbinghaus curve)
+const intervals = [1, 3, 7, 14, 30, 60, 90]; // days
+
+// Next reminder calculation
+const revisionCount = problem.revision_count;
+const intervalIndex = Math.min(revisionCount, intervals.length - 1);
+const nextDate = new Date();
+nextDate.setDate(nextDate.getDate() + intervals[intervalIndex]);
+```
+
+---
+
+### **Curated Sheets (Problem Lists) Endpoints**
+
+#### `GET /api/lists`
+Get all problem lists (curated sheets).
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "lists": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "NeetCode 150",
+      "description": "The famous Blind 75 + essential patterns",
+      "isOfficial": true,
+      "sections": [
+        {
+          "title": "Arrays & Hashing",
+          "problems": [
+            {
+              "title": "Contains Duplicate",
+              "url": "https://leetcode.com/problems/contains-duplicate",
+              "difficulty": "Easy"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### `POST /api/lists/seed-famous` (Admin Only)
+Seed the database with famous DSA sheets.
+
+**Protected Route**: Requires admin email (`sarthak1712005@gmail.com`)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Successfully seeded 4 famous lists",
+  "lists": ["NeetCode 150", "Striver's A2Z", "NeetCode All", "Love Babbar 450"]
+}
+```
+
+---
+
+### **Company Problems Endpoints**
+
+#### `GET /api/companies`
+Get all companies with problem counts.
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "companies": [
+    { "name": "Google", "problemCount": 892, "easy": 150, "medium": 520, "hard": 222 },
+    { "name": "Amazon", "problemCount": 756, "easy": 120, "medium": 480, "hard": 156 },
+    { "name": "Meta", "problemCount": 623, "easy": 89, "medium": 412, "hard": 122 }
+  ]
+}
+```
+
+#### `GET /api/company-problems`
+Get problems filtered by company.
+
+**Query Parameters:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `company` | string | Company name (Google, Amazon, etc.) |
+| `difficulty` | string | Filter by difficulty |
+| `search` | string | Search in problem title |
+| `limit` | number | Max results (default: 200) |
+
+---
+
+### **Analytics Endpoints**
+
+#### `GET /api/analytics/stats`
+Get user's overall statistics.
+
+**Response (200):**
+```json
+{
+  "totalProblems": 1897,
+  "solvedProblems": 172,
+  "totalRevisions": 45,
+  "currentStreak": 7,
+  "topicDistribution": {
+    "Arrays": 45,
+    "Trees": 32,
+    "Dynamic Programming": 28,
+    "Graphs": 21
+  },
+  "difficultyBreakdown": {
+    "Easy": 60,
+    "Medium": 85,
+    "Hard": 27
+  }
+}
+```
+
+---
+
+## 🌱 Database Seeding
+
+### **How Data is Populated**
+
+The application uses multiple seeding strategies to populate the database with curated content:
+
+### **1. Company Problems Seeding**
+
+**Source**: CSV files in `server/src/data/companies/`
+**Total Problems**: 7,715+ problems from 463+ companies
+
+```bash
+# Run the seeding script
+cd server
+node src/scripts/seedCompanyProblemsLocal.js
+```
+
+**CSV Format:**
+```csv
+title,url,difficulty,topics,companies
+"Two Sum","https://leetcode.com/problems/two-sum","Easy","array,hash-table","Google,Amazon,Meta"
+```
+
+**Process Flow:**
+```
+CSV Files → Parse → Transform → Upsert to MongoDB (companyproblems collection)
+```
+
+### **2. Famous DSA Sheets Seeding**
+
+**Source**: Hardcoded data files in `server/src/data/`
+
+| File | Sheet | Problems |
+|------|-------|----------|
+| `neetcode150.js` | NeetCode 150 | 150 |
+| `striverA2Z.js` | Striver's A2Z | 455+ |
+| `neetcodeAll.js` | NeetCode All | 250 |
+| `babbar450.js` | Love Babbar 450 | 370+ |
+
+**Data Structure:**
+```javascript
+// Example: server/src/data/neetcode150.js
+export default {
+  name: "NeetCode 150",
+  description: "The famous Blind 75 + essential patterns for FAANG",
+  sections: [
+    {
+      title: "Arrays & Hashing",
+      problems: [
+        {
+          title: "Contains Duplicate",
+          url: "https://leetcode.com/problems/contains-duplicate/",
+          platform: "LeetCode",
+          difficulty: "Easy"
+        }
+      ]
+    }
+  ]
+};
+```
+
+**Seeding Process:**
+```javascript
+// Triggered via POST /api/lists/seed-famous
+const seedFamousLists = async (req, res) => {
+  // 1. Check admin authorization
+  if (req.user.email !== 'sarthak1712005@gmail.com') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+  
+  // 2. Upsert each sheet
+  await ProblemList.findOneAndUpdate(
+    { name: "NeetCode 150" },
+    { $set: neetcode150Data },
+    { upsert: true, new: true }
+  );
+  
+  // 3. Repeat for all sheets...
+};
+```
+
+### **3. CS Fundamentals Content**
+
+**Source**: GitHub repositories (OS, DBMS, Networks, OOPs, SQL)
+
+**Storage**: Fetched dynamically from GitHub API and cached
+
+**Topics Covered:**
+```
+Fundamentals/
+├── Operating Systems (18 chapters)
+│   ├── Introduction
+│   ├── Process Management
+│   ├── CPU Scheduling
+│   ├── Deadlocks
+│   ├── Memory Management
+│   └── ...
+├── DBMS (15 chapters)
+├── Networks (12 chapters)
+├── OOPs (10 chapters)
+└── SQL (8 chapters)
+```
+
+### **4. System Design Content**
+
+**Source**: Local markdown files in `client/public/system-design-data/`
+
+**Structure:**
+```
+system-design-data/
+├── hld/              # High-Level Design
+│   ├── system-design-primer.md
+│   └── ...
+└── lld/              # Low-Level Design
+    ├── 01-intro.md
+    ├── 02-solid-srp.md
+    ├── 13-case-parking-lot.md
+    └── ...
+```
+
+---
+
+## 🔄 Data Flow Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        CLIENT (React)                            │
+├─────────────────────────────────────────────────────────────────┤
+│  ProblemsPage.jsx  │  CuratedListPage.jsx  │  CompaniesPage.jsx │
+│         │                    │                      │            │
+│         ▼                    ▼                      ▼            │
+│    fetchProblems()    listService.getLists()  fetchCompanies()  │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ HTTP/REST
+┌─────────────────────────────────────────────────────────────────┐
+│                       SERVER (Express)                           │
+├─────────────────────────────────────────────────────────────────┤
+│  /api/problems  │  /api/lists  │  /api/company-problems          │
+│        │               │                │                        │
+│        ▼               ▼                ▼                        │
+│  problemController  listController  companyProblemsController    │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ Mongoose ODM
+┌─────────────────────────────────────────────────────────────────┐
+│                     MONGODB ATLAS                                │
+├─────────────────────────────────────────────────────────────────┤
+│  problems (user-specific)  │  problemlists  │  companyproblems  │
+│  1,897+ per user           │  4 sheets      │  7,715+ shared    │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

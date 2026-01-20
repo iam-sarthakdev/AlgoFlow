@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const baseUrl = import.meta.env.VITE_API_URL || 'https://algoflow-api.onrender.com';
 const API_BASE_URL = baseUrl.endsWith('/api') ? baseUrl : `${baseUrl}/api`;
 
 // Create axios instance with default config

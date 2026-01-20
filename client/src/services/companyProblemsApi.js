@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Use same base URL format as api.js
-const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const baseUrl = import.meta.env.VITE_API_URL || 'https://algoflow-api.onrender.com';
 const API_URL = baseUrl.endsWith('/api') ? baseUrl : `${baseUrl}/api`;
 
 // Get auth header

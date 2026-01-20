@@ -558,6 +558,33 @@ const CuratedListsPage = () => {
         </div>
     );
 
+    // --- Auto-Seed Logic for Admin ---
+    useEffect(() => {
+        if (isAdmin && !loading && allLists.length > 0) {
+            const hasNeetCode = allLists.some(l => l.name.includes('NeetCode'));
+            if (!hasNeetCode) {
+                const seed = async () => {
+                    try {
+                        const token = localStorage.getItem('token');
+                        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/lists/seed-famous`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                        // Silent success, refresh lists
+                        fetchAllLists();
+                    } catch (err) {
+                        console.error("Auto-seed failed", err);
+                    }
+                };
+                seed();
+            }
+        }
+    }, [isAdmin, loading, allLists]);
+
+
     // --- DASHBOARD VIEW ---
     if (viewMode === 'dashboard') {
         return (
@@ -612,20 +639,6 @@ const CuratedListsPage = () => {
                                 </div>
                             </motion.div>
                         ))}
-
-                        {/* Seed Button for Admin */}
-                        {isAdmin && (
-                            <motion.div
-                                onClick={handleSeedFamousLists}
-                                className="group relative bg-dashed border-2 border-white/10 hover:border-green-500/50 rounded-3xl p-8 cursor-pointer flex flex-col items-center justify-center text-center transition-all hover:bg-green-500/5"
-                            >
-                                <div className="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    {submitting ? <div className="animate-spin h-6 w-6 border-2 border-green-500 rounded-full border-t-transparent" /> : <RefreshCw className="text-green-500" size={24} />}
-                                </div>
-                                <h3 className="text-lg font-bold text-slate-300 group-hover:text-green-400">Sync Famous Sheets</h3>
-                                <p className="text-slate-500 text-xs mt-2">Admin: Fetch latest NeetCode/Striver data</p>
-                            </motion.div>
-                        )}
                     </div>
                 </div>
             </div>

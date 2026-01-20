@@ -35,6 +35,29 @@ export const addProblemToList = async (req, res) => {
         await list.save();
 
         res.status(200).json(list);
+        // ... existing code ...
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const toggleProblemCompletion = async (req, res) => {
+    const { listId, sectionId, problemId } = req.params;
+
+    try {
+        const list = await ProblemList.findById(listId);
+        if (!list) return res.status(404).json({ message: 'List not found' });
+
+        const section = list.sections.id(sectionId);
+        if (!section) return res.status(404).json({ message: 'Section not found' });
+
+        const problem = section.problems.id(problemId);
+        if (!problem) return res.status(404).json({ message: 'Problem not found' });
+
+        problem.isCompleted = !problem.isCompleted;
+        await list.save();
+
+        res.status(200).json(list);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -216,6 +239,75 @@ const sarthaksList = {
         {
             title: "Matrix",
             problems: []
+        },
+        {
+            title: "Linked List",
+
+            problems: [
+                { title: "Delete Node in a Linked List", url: "https://leetcode.com/problems/delete-node-in-a-linked-list/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Remove Duplicates from Sorted List", url: "https://leetcode.com/problems/remove-duplicates-from-sorted-list/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Middle of the Linked List", url: "https://leetcode.com/problems/middle-of-the-linked-list/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Reverse Linked List", url: "https://leetcode.com/problems/reverse-linked-list/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Remove Nth Node From End of List", url: "https://leetcode.com/problems/remove-nth-node-from-end-of-list/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Linked List Cycle", url: "https://leetcode.com/problems/linked-list-cycle/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Linked List Cycle II", url: "https://leetcode.com/problems/linked-list-cycle-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Palindrome Linked List", url: "https://leetcode.com/problems/palindrome-linked-list/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Delete the Middle Node of a Linked List", url: "https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Merge Two Sorted Lists", url: "https://leetcode.com/problems/merge-two-sorted-lists/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Add Two Numbers", url: "https://leetcode.com/problems/add-two-numbers/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Add Two Numbers II", url: "https://leetcode.com/problems/add-two-numbers-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Intersection of Two Linked Lists", url: "https://leetcode.com/problems/intersection-of-two-linked-lists/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Odd Even Linked List", url: "https://leetcode.com/problems/odd-even-linked-list/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Maximum Twin Sum of a Linked List", url: "https://leetcode.com/problems/maximum-twin-sum-of-a-linked-list/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Reverse Linked List II", url: "https://leetcode.com/problems/reverse-linked-list-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Reverse Nodes in k-Group", url: "https://leetcode.com/problems/reverse-nodes-in-k-group/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "LRU Cache", url: "https://leetcode.com/problems/lru-cache/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Copy List with Random Pointer", url: "https://leetcode.com/problems/copy-list-with-random-pointer/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Flatten a Multilevel Doubly Linked List", url: "https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/", platform: "LeetCode", difficulty: "Medium" }
+            ]
+        },
+        {
+            title: "Merge Intervals",
+            problems: [
+                { title: "Merge Intervals", url: "https://leetcode.com/problems/merge-intervals/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Insert Interval", url: "https://leetcode.com/problems/insert-interval/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Non-overlapping Intervals", url: "https://leetcode.com/problems/non-overlapping-intervals/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Minimum Number of Arrows to Burst Balloons", url: "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Remove Covered Intervals", url: "https://leetcode.com/problems/remove-covered-intervals/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Video Stitching", url: "https://leetcode.com/problems/video-stitching/", platform: "LeetCode", difficulty: "Medium" }
+            ]
+        },
+        {
+            title: "Greedy",
+            problems: [
+                { title: "Assign Cookies", url: "https://leetcode.com/problems/assign-cookies/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Lemonade Change", url: "https://leetcode.com/problems/lemonade-change/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Best Time to Buy and Sell Stock II", url: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Jump Game", url: "https://leetcode.com/problems/jump-game/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Jump Game II", url: "https://leetcode.com/problems/jump-game-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Gas Station", url: "https://leetcode.com/problems/gas-station/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Boats to Save People", url: "https://leetcode.com/problems/boats-to-save-people/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Minimum Add to Make Parentheses Valid", url: "https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Two City Scheduling", url: "https://leetcode.com/problems/two-city-scheduling/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Bag of Tokens", url: "https://leetcode.com/problems/bag-of-tokens/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Largest Number", url: "https://leetcode.com/problems/largest-number/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Partition Labels", url: "https://leetcode.com/problems/partition-labels/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Valid Parenthesis String", url: "https://leetcode.com/problems/valid-parenthesis-string/", platform: "LeetCode", difficulty: "Medium" }
+            ]
+        },
+        {
+            title: "Backtracking",
+            problems: [
+                { title: "Permutations", url: "https://leetcode.com/problems/permutations/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "N-Queens", url: "https://leetcode.com/problems/n-queens/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "N-Queens II", url: "https://leetcode.com/problems/n-queens-ii/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Valid Sudoku", url: "https://leetcode.com/problems/valid-sudoku/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Sudoku Solver", url: "https://leetcode.com/problems/sudoku-solver/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Permutations II", url: "https://leetcode.com/problems/permutations-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Subsets", url: "https://leetcode.com/problems/subsets/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Combination Sum", url: "https://leetcode.com/problems/combination-sum/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Combination Sum II", url: "https://leetcode.com/problems/combination-sum-ii/", platform: "LeetCode", difficulty: "Medium" }
+            ]
         }
     ]
 };

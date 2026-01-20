@@ -25,10 +25,19 @@ const addProblemToList = async (listId, sectionTitle, problemData) => {
     return response.data;
 };
 
+const toggleProblemCompletion = async (listId, sectionId, problemId) => {
+    const response = await axios.patch(`${API_URL}/lists/${listId}/sections/${sectionId}/problems/${problemId}/toggle`, {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+    return response.data;
+};
+
 const listService = {
     getLists,
     getListByName,
-    addProblemToList
+    getListByName,
+    addProblemToList,
+    toggleProblemCompletion
 };
 
 export default listService;

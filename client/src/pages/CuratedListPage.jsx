@@ -48,6 +48,7 @@ const CuratedListsPage = () => {
     const toggleSection = (sectionId) => {
         setExpandedSections(prev => ({
             ...prev,
+            [sectionId]: !prev[sectionId]
         }));
     };
 
@@ -55,6 +56,35 @@ const CuratedListsPage = () => {
         setSelectedSection(sectionTitle);
         setNewProblem({ title: '', url: '', platform: 'LeetCode', difficulty: 'Medium' });
         setIsModalOpen(true);
+    };
+
+    const handleToggleCompletion = async (sectionId, problemId, e) => {
+        e.stopPropagation(); // Prevent accordion toggle
+        try {
+            // Optimistic update
+            const updatedSections = list.sections.map(section => {
+                if (section._id === sectionId) {
+                    return {
+                        ...section,
+                        problems: section.problems.map(p => {
+                            if (p._id === problemId) {
+                                return { ...p, isCompleted: !p.isCompleted };
+                            }
+                            return p;
+                        })
+                    };
+                }
+                return section;
+            });
+            setList({ ...list, sections: updatedSections });
+
+            await listService.toggleProblemCompletion(list._id, sectionId, problemId);
+        } catch (err) {
+            console.error("Failed to toggle completion:", err);
+            // Revert fetching list again to ensure state consistency
+            const data = await listService.getListByName("Sarthak's List");
+            setList(data);
+        }
     };
 
     const handleAddSubmit = async (e) => {
@@ -190,7 +220,10 @@ const CuratedListsPage = () => {
                                                     className="group flex items-center justify-between p-4 bg-gray-900/50 rounded-lg hover:bg-gray-800 transition-all border border-transparent hover:border-gray-700"
                                                 >
                                                     <div className="flex items-center gap-3">
-                                                        <button className="text-gray-500 hover:text-green-500 transition-colors">
+                                                        <button
+                                                            onClick={(e) => handleToggleCompletion(section._id, problem._id, e)}
+                                                            className="text-gray-500 hover:text-green-500 transition-colors"
+                                                        >
                                                             {problem.isCompleted ? <CheckCircle className="text-green-500 text-lg" /> : <Circle className="text-lg" />}
                                                         </button>
                                                         <div>

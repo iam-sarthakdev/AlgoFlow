@@ -255,11 +255,12 @@ const CuratedListsPage = () => {
 
     // --- Auto-Seed Logic for Admin ---
     useEffect(() => {
-        if (isAdmin && !loading && allLists.length > 0) {
+        if (isAdmin && !loading) {
             const hasNeetCode = allLists.some(l => l.name.includes('NeetCode'));
             if (!hasNeetCode) {
                 const seed = async () => {
                     try {
+                        console.log("Auto-seeding famous lists...");
                         const token = localStorage.getItem('token');
                         await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/lists/seed-famous`, {
                             method: 'POST',

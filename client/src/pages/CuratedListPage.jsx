@@ -338,10 +338,18 @@ const CuratedListsPage = () => {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            if (!response.ok) throw new Error("Seeding failed");
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error("Seeding API Error:", data);
+                throw new Error(data.message || "Seeding failed");
+            }
+
             alert("Lists seeded successfully!");
             fetchAllLists();
         } catch (err) {
+            console.error("Seeding error:", err);
             alert("Seeding failed: " + err.message);
         } finally {
             setSubmitting(false);

@@ -492,41 +492,85 @@ export const seedDefaultLists = async (req, res) => {
 
 export const seedFamousLists = async (req, res) => {
     try {
-        await checkAdmin(req.user.userId);
+        // Step 1: Check if req.user exists
+        if (!req.user) {
+            console.error("Seeding Error: req.user is undefined - Authentication middleware failed");
+            return res.status(401).json({ message: "Authentication failed - no user found", step: "auth" });
+        }
 
-        // Import hardcoded data (no external API calls = guaranteed to work)
-        const { default: neetcode150 } = await import('../data/neetcode150.js');
-        const { default: striverA2Z } = await import('../data/striverA2Z.js');
+        console.log("Step 1 passed: req.user exists, userId:", req.user.userId);
 
-        // --- 1. NEETCODE 150 ---
-        await ProblemList.findOneAndUpdate(
-            { name: neetcode150.name },
-            {
-                name: neetcode150.name,
-                description: neetcode150.description,
-                sections: neetcode150.sections,
-                is_public: true
-            },
-            { upsert: true, new: true }
-        );
-        console.log("✅ NeetCode 150 seeded successfully");
+        // Step 2: Check admin
+        try {
+            await checkAdmin(req.user.userId);
+            console.log("Step 2 passed: Admin check successful");
+        } catch (adminError) {
+            console.error("Seeding Error: Admin check failed:", adminError.message);
+            return res.status(403).json({ message: "Admin check failed: " + adminError.message, step: "admin_check" });
+        }
 
-        // --- 2. STRIVER'S A2Z ---
-        await ProblemList.findOneAndUpdate(
-            { name: striverA2Z.name },
-            {
-                name: striverA2Z.name,
-                description: striverA2Z.description,
-                sections: striverA2Z.sections,
-                is_public: true
-            },
-            { upsert: true, new: true }
-        );
-        console.log("✅ Striver's A2Z seeded successfully");
+        // Step 3: Import neetcode150 data
+        let neetcode150;
+        try {
+            const ncModule = await import('../data/neetcode150.js');
+            neetcode150 = ncModule.default;
+            console.log("Step 3 passed: NeetCode data imported, sections:", neetcode150?.sections?.length || 0);
+        } catch (importError) {
+            console.error("Seeding Error: Failed to import neetcode150.js:", importError.message);
+            return res.status(500).json({ message: "Failed to import NeetCode data: " + importError.message, step: "import_neetcode" });
+        }
 
+        // Step 4: Import striverA2Z data
+        let striverA2Z;
+        try {
+            const stModule = await import('../data/striverA2Z.js');
+            striverA2Z = stModule.default;
+            console.log("Step 4 passed: Striver data imported, sections:", striverA2Z?.sections?.length || 0);
+        } catch (importError) {
+            console.error("Seeding Error: Failed to import striverA2Z.js:", importError.message);
+            return res.status(500).json({ message: "Failed to import Striver data: " + importError.message, step: "import_striver" });
+        }
+
+        // Step 5: Upsert NeetCode 150
+        try {
+            await ProblemList.findOneAndUpdate(
+                { name: neetcode150.name },
+                {
+                    name: neetcode150.name,
+                    description: neetcode150.description,
+                    sections: neetcode150.sections,
+                    is_public: true
+                },
+                { upsert: true, new: true }
+            );
+            console.log("Step 5 passed: NeetCode 150 saved to database");
+        } catch (dbError) {
+            console.error("Seeding Error: Failed to save NeetCode to DB:", dbError.message);
+            return res.status(500).json({ message: "Failed to save NeetCode: " + dbError.message, step: "db_neetcode" });
+        }
+
+        // Step 6: Upsert Striver's A2Z
+        try {
+            await ProblemList.findOneAndUpdate(
+                { name: striverA2Z.name },
+                {
+                    name: striverA2Z.name,
+                    description: striverA2Z.description,
+                    sections: striverA2Z.sections,
+                    is_public: true
+                },
+                { upsert: true, new: true }
+            );
+            console.log("Step 6 passed: Striver's A2Z saved to database");
+        } catch (dbError) {
+            console.error("Seeding Error: Failed to save Striver to DB:", dbError.message);
+            return res.status(500).json({ message: "Failed to save Striver: " + dbError.message, step: "db_striver" });
+        }
+
+        console.log("✅ ALL STEPS PASSED - Seeding complete!");
         res.status(200).json({ message: "Famous lists seeded successfully!" });
     } catch (error) {
-        console.error("Seeding error:", error);
-        res.status(500).json({ message: "Failed to seed famous lists", error: error.message });
+        console.error("Seeding error (uncaught):", error);
+        res.status(500).json({ message: "Failed to seed famous lists", error: error.message, step: "unknown" });
     }
 };

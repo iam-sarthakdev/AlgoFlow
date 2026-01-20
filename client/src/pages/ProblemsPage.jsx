@@ -81,10 +81,10 @@ const ProblemsPage = () => {
             setUserProblems(mappedUserProblems);
             setTotalCount(userData.total || mappedUserProblems.length); // Update total count
 
-            // Only fetch company problems if explicitly requested or needed, NOT always
-            if (showSource === 'company') {
+            // Fetch company problems for both 'all' and 'company' tabs
+            if (showSource === 'company' || showSource === 'all') {
                 try {
-                    const companyData = await fetchCompanyProblems({ ...filters, limit: 100, search: searchQuery });
+                    const companyData = await fetchCompanyProblems({ ...filters, limit: 200, search: searchQuery });
                     const mappedCompanyProblems = (companyData.problems || []).map(p => ({
                         ...p,
                         source: 'company',
@@ -128,7 +128,7 @@ const ProblemsPage = () => {
 
     const combinedProblems = showSource === 'user' ? userProblems
         : showSource === 'company' ? companyProblems
-            : [...userProblems]; // For "all", we mainly show user problems unless searched explicitly? let's keep it simple.
+            : [...userProblems, ...companyProblems]; // For "all", combine both user and company problems
 
     // No client-side filtering needed as backend handles it now
     const filteredProblems = combinedProblems;

@@ -17,7 +17,6 @@ import DashboardPage from './pages/DashboardPage';
 import SystemDesignPage from './pages/SystemDesignPage';
 import FundamentalsPage from './pages/FundamentalsPage';
 import BehavioralPage from './pages/BehavioralPage';
-import DSAPrepPage from './pages/DSAPrepPage';
 import LeetCodeSettings from './pages/LeetCodeSettings';
 import CuratedListsPage from './pages/CuratedListPage';
 import PageLayout from './components/PageLayout';
@@ -128,7 +127,7 @@ function AppRoutes() {
             <Route path="/dsa-sheets" element={
                 <ProtectedRoute>
                     <PageLayout>
-                        <DSAPrepPage />
+                        <CuratedListsPage />
                     </PageLayout>
                 </ProtectedRoute>
             } />

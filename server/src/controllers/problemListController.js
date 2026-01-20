@@ -494,78 +494,35 @@ export const seedFamousLists = async (req, res) => {
     try {
         await checkAdmin(req.user.userId);
 
+        // Import hardcoded data (no external API calls = guaranteed to work)
+        const { default: neetcode150 } = await import('../data/neetcode150.js');
+        const { default: striverA2Z } = await import('../data/striverA2Z.js');
+
         // --- 1. NEETCODE 150 ---
-        try {
-            const ncResponse = await axios.get('https://raw.githubusercontent.com/neetcode-gh/leetcode/main/.problemSiteData.json');
-            const ncData = ncResponse.data;
-            const ncProblems = ncData.filter(p => p.neetcode150);
-
-            const ncSectionsMap = {};
-            ncProblems.forEach(p => {
-                const pattern = p.pattern || 'Uncategorized';
-                if (!ncSectionsMap[pattern]) {
-                    ncSectionsMap[pattern] = [];
-                }
-                ncSectionsMap[pattern].push({
-                    title: p.problem,
-                    url: `https://leetcode.com/problems/${p.link || p.problem.toLowerCase().replace(/ /g, '-')}/`,
-                    platform: 'LeetCode',
-                    difficulty: p.difficulty,
-                    isCompleted: false,
-                    revision_count: 0
-                });
-            });
-
-            const ncSections = Object.keys(ncSectionsMap).map(title => ({
-                title,
-                problems: ncSectionsMap[title]
-            }));
-
-            await ProblemList.findOneAndUpdate(
-                { name: "NeetCode 150" },
-                {
-                    name: "NeetCode 150",
-                    description: "The famous NeetCode 150 list. Covers all essential patterns for FAANG interviews.",
-                    sections: ncSections,
-                    is_public: true
-                },
-                { upsert: true, new: true }
-            );
-        } catch (ncErr) {
-            console.error("NeetCode seed failed:", ncErr.message);
-        }
-
-        // --- 2. STRIVER'S A2Z (Structure Only) ---
-        const STRIVER_SECTIONS = [
-            "Learn the Basics", "Learn Important Sorting Techniques", "Solve Problems on Arrays",
-            "Binary Search", "Strings", "Learn LinkedList", "Recursion", "Bit Manipulation",
-            "Stack and Queues", "Sliding Window & Two Pointer", "Heaps", "Greedy Algorithms",
-            "Binary Trees", "Binary Search Trees", "Graphs", "Dynamic Programming", "Tries"
-        ];
-
-        const striverSections = STRIVER_SECTIONS.map(title => ({
-            title,
-            problems: []
-        }));
-
-        // Placeholder
-        striverSections[0].problems.push({
-            title: "User Input / Output",
-            url: "https://www.geeksforgeeks.org/problems/search-query-auto-complete/1",
-            platform: "GeeksForGeeks",
-            difficulty: "Easy"
-        });
-
         await ProblemList.findOneAndUpdate(
-            { name: "Striver's A2Z" },
+            { name: neetcode150.name },
             {
-                name: "Striver's A2Z",
-                description: "Striver's comprehensive A2Z DSA Course Sheet.",
-                sections: striverSections,
+                name: neetcode150.name,
+                description: neetcode150.description,
+                sections: neetcode150.sections,
                 is_public: true
             },
             { upsert: true, new: true }
         );
+        console.log("✅ NeetCode 150 seeded successfully");
+
+        // --- 2. STRIVER'S A2Z ---
+        await ProblemList.findOneAndUpdate(
+            { name: striverA2Z.name },
+            {
+                name: striverA2Z.name,
+                description: striverA2Z.description,
+                sections: striverA2Z.sections,
+                is_public: true
+            },
+            { upsert: true, new: true }
+        );
+        console.log("✅ Striver's A2Z seeded successfully");
 
         res.status(200).json({ message: "Famous lists seeded successfully!" });
     } catch (error) {

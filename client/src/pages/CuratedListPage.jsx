@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    FaChevronDown, FaChevronUp, FaCheckCircle, FaRegCircle,
-    FaExternalLinkAlt, FaPlus, FaTrophy, FaChartLine
-} from 'react-icons/fa';
+    ChevronDown, ChevronUp, CheckCircle, Circle,
+    ExternalLink, Plus, Trophy, LineChart
+} from 'lucide-react';
 import listService from '../services/listService';
 
 
@@ -123,7 +123,7 @@ const CuratedListsPage = () => {
                     <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-2xl border border-gray-700/50 shadow-xl max-w-3xl mx-auto">
                         <div className="flex justify-between items-end mb-2">
                             <div className="flex items-center gap-2">
-                                <FaTrophy className="text-yellow-400 text-xl" />
+                                <Trophy className="text-yellow-400 text-xl" />
                                 <span className="font-semibold text-gray-200">Overall Progress</span>
                             </div>
                             <span className="text-2xl font-bold text-primary-400">{progressPercentage}%</span>
@@ -159,7 +159,7 @@ const CuratedListsPage = () => {
                             >
                                 <div className="flex items-center gap-4">
                                     <div className="bg-primary-500/10 p-3 rounded-lg text-primary-400">
-                                        <FaChartLine />
+                                        <LineChart />
                                     </div>
                                     <div className="text-left">
                                         <h3 className="text-xl font-bold text-gray-100">{section.title}</h3>
@@ -169,7 +169,7 @@ const CuratedListsPage = () => {
                                 <div className="flex items-center gap-4">
                                     {/* Mini Progress for Section */}
                                     {/* <div className="hidden md:block w-32 bg-gray-700 rounded-full h-2"> ... </div> */}
-                                    {expandedSections[section._id] ? <FaChevronUp className="text-gray-400" /> : <FaChevronDown className="text-gray-400" />}
+                                    {expandedSections[section._id] ? <ChevronUp className="text-gray-400" /> : <ChevronDown className="text-gray-400" />}
                                 </div>
                             </button>
 
@@ -191,7 +191,7 @@ const CuratedListsPage = () => {
                                                 >
                                                     <div className="flex items-center gap-3">
                                                         <button className="text-gray-500 hover:text-green-500 transition-colors">
-                                                            {problem.isCompleted ? <FaCheckCircle className="text-green-500 text-lg" /> : <FaRegCircle className="text-lg" />}
+                                                            {problem.isCompleted ? <CheckCircle className="text-green-500 text-lg" /> : <Circle className="text-lg" />}
                                                         </button>
                                                         <div>
                                                             <a
@@ -223,7 +223,7 @@ const CuratedListsPage = () => {
                                                         rel="noopener noreferrer"
                                                         className="p-2 text-gray-500 hover:text-white transition-colors"
                                                     >
-                                                        <FaExternalLinkAlt size={14} />
+                                                        <ExternalLink size={14} />
                                                     </a>
                                                 </div>
                                             ))}
@@ -232,7 +232,7 @@ const CuratedListsPage = () => {
                                                 onClick={() => openAddModal(section.title)}
                                                 className="w-full py-3 mt-2 border-2 border-dashed border-gray-700 rounded-lg text-gray-500 hover:text-primary-400 hover:border-primary-500/50 hover:bg-gray-800/50 transition-all flex items-center justify-center gap-2"
                                             >
-                                                <FaPlus /> <span>Add Problem to {section.title}</span>
+                                                <Plus /> <span>Add Problem to {section.title}</span>
                                             </button>
                                         </div>
                                     </motion.div>

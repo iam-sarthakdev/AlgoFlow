@@ -39,7 +39,16 @@ const babbar450 = {
                 { title: "Minimum Swaps to Sort", url: "https://www.geeksforgeeks.org/problems/minimum-swaps/1", platform: "GeeksForGeeks", difficulty: "Medium" },
                 { title: "Palindromic Array", url: "https://www.geeksforgeeks.org/problems/palindromic-array-1587115620/1", platform: "GeeksForGeeks", difficulty: "Easy" },
                 { title: "Median of 2 Sorted Arrays", url: "https://leetcode.com/problems/median-of-two-sorted-arrays/", platform: "LeetCode", difficulty: "Hard" },
-                { title: "Array Subset of Another", url: "https://www.geeksforgeeks.org/problems/array-subset-of-another-array2317/1", platform: "GeeksForGeeks", difficulty: "Easy" }
+                { title: "Array Subset of Another", url: "https://www.geeksforgeeks.org/problems/array-subset-of-another-array2317/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Spirally Traversing a Matrix", url: "https://www.geeksforgeeks.org/problems/spirally-traversing-a-matrix-1587115621/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Maximum of All Subarrays of Size K", url: "https://leetcode.com/problems/sliding-window-maximum/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Find Missing And Repeating", url: "https://www.geeksforgeeks.org/problems/find-missing-and-repeating2512/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Stock Buy Sell II", url: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Count More than N/K Occurrences", url: "https://www.geeksforgeeks.org/problems/count-element-occurences/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Equilibrium Point", url: "https://www.geeksforgeeks.org/problems/equilibrium-point-1587115620/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Leaders in an Array", url: "https://www.geeksforgeeks.org/problems/leaders-in-an-array-1587115620/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Largest Number formed from Array", url: "https://leetcode.com/problems/largest-number/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Wave Array", url: "https://www.geeksforgeeks.org/problems/wave-array-1587115621/1", platform: "GeeksForGeeks", difficulty: "Easy" }
             ]
         },
         {
@@ -54,7 +63,10 @@ const babbar450 = {
                 { title: "Kth Smallest in Row-Col Sorted", url: "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/", platform: "LeetCode", difficulty: "Medium" },
                 { title: "Common Elements in All Rows", url: "https://www.geeksforgeeks.org/problems/common-element-in-all-rows0Remove-invalid-parentheses-1587115620/1", platform: "GeeksForGeeks", difficulty: "Medium" },
                 { title: "Set Matrix Zeroes", url: "https://leetcode.com/problems/set-matrix-zeroes/", platform: "LeetCode", difficulty: "Medium" },
-                { title: "Maximum Rectangle of 1s", url: "https://leetcode.com/problems/maximal-rectangle/", platform: "LeetCode", difficulty: "Hard" }
+                { title: "Maximum Rectangle of 1s", url: "https://leetcode.com/problems/maximal-rectangle/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Find Specific Pair in Matrix", url: "https://www.geeksforgeeks.org/problems/find-a-specific-pair-in-matrix0111/1", platform: "GeeksForGeeks", difficulty: "Hard" },
+                { title: "Boolean Matrix", url: "https://www.geeksforgeeks.org/problems/boolean-matrix-problem-1587115620/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Median in Row Wise Sorted Matrix", url: "https://www.geeksforgeeks.org/problems/median-in-a-row-wise-sorted-matrix1527/1", platform: "GeeksForGeeks", difficulty: "Hard" }
             ]
         },
         {
@@ -91,7 +103,14 @@ const babbar450 = {
                 { title: "Isomorphic Strings", url: "https://leetcode.com/problems/isomorphic-strings/", platform: "LeetCode", difficulty: "Easy" },
                 { title: "Reorganize String", url: "https://leetcode.com/problems/reorganize-string/", platform: "LeetCode", difficulty: "Medium" },
                 { title: "Group Anagrams", url: "https://leetcode.com/problems/group-anagrams/", platform: "LeetCode", difficulty: "Medium" },
-                { title: "Longest Substring Without Repeating", url: "https://leetcode.com/problems/longest-substring-without-repeating-characters/", platform: "LeetCode", difficulty: "Medium" }
+                { title: "Longest Substring Without Repeating", url: "https://leetcode.com/problems/longest-substring-without-repeating-characters/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "First Unique Character", url: "https://leetcode.com/problems/first-unique-character-in-a-string/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Wildcard String Matching", url: "https://leetcode.com/problems/wildcard-matching/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Print All Anagrams Together", url: "https://www.geeksforgeeks.org/problems/print-anagrams-together/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Smallest Distinct Window", url: "https://www.geeksforgeeks.org/problems/smallest-distant-window3132/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Remove Consecutive Characters", url: "https://www.geeksforgeeks.org/problems/consecutive-elements2306/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Generate IP Addresses", url: "https://leetcode.com/problems/restore-ip-addresses/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Word Search", url: "https://leetcode.com/problems/word-search/", platform: "LeetCode", difficulty: "Medium" }
             ]
         },
         {
@@ -112,7 +131,18 @@ const babbar450 = {
                 { title: "Inversion Count", url: "https://www.geeksforgeeks.org/problems/inversion-of-array-1587115620/1", platform: "GeeksForGeeks", difficulty: "Medium" },
                 { title: "Majority Element", url: "https://leetcode.com/problems/majority-element/", platform: "LeetCode", difficulty: "Easy" },
                 { title: "Missing and Repeating", url: "https://www.geeksforgeeks.org/problems/find-missing-and-repeating2512/1", platform: "GeeksForGeeks", difficulty: "Medium" },
-                { title: "Kth Element of Two Sorted", url: "https://www.geeksforgeeks.org/problems/k-th-element-of-two-sorted-array1317/1", platform: "GeeksForGeeks", difficulty: "Medium" }
+                { title: "Kth Element of Two Sorted", url: "https://www.geeksforgeeks.org/problems/k-th-element-of-two-sorted-array1317/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Zero Sum Subarrays", url: "https://www.geeksforgeeks.org/problems/zero-sum-subarrays1825/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Painters Partition", url: "https://www.geeksforgeeks.org/problems/the-painters-partition-problem1535/1", platform: "GeeksForGeeks", difficulty: "Hard" },
+                { title: "Ceiling in a Sorted Array", url: "https://www.geeksforgeeks.org/problems/ceiling-in-a-sorted-array1529/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Floor in a Sorted Array", url: "https://www.geeksforgeeks.org/problems/floor-in-a-sorted-array-1587115620/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Peak Element", url: "https://leetcode.com/problems/find-peak-element/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Count 1s in Sorted Binary Array", url: "https://www.geeksforgeeks.org/problems/count-number-of-ones0656/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Square Root of Number", url: "https://leetcode.com/problems/sqrtx/", platform: "LeetCode", difficulty: "Easy" },
+                { title: "Maximum Sum Such That No Two Elements Adjacent", url: "https://www.geeksforgeeks.org/problems/stickler-theif-1587115621/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Triplet Sum in Array", url: "https://www.geeksforgeeks.org/problems/triplet-sum-in-array-1587115621/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Smallest Positive Missing", url: "https://www.geeksforgeeks.org/problems/smallest-positive-missing-number-1587115621/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Double Helix", url: "https://www.spoj.com/problems/ANARC05B/", platform: "SPOJ", difficulty: "Medium" }
             ]
         },
         {
@@ -142,7 +172,14 @@ const babbar450 = {
                 { title: "Multiply Two Linked Lists", url: "https://www.geeksforgeeks.org/problems/multiply-two-linked-lists/1", platform: "GeeksForGeeks", difficulty: "Easy" },
                 { title: "Delete N Nodes After M", url: "https://www.geeksforgeeks.org/problems/delete-n-nodes-after-m-nodes-of-a-linked-list/1", platform: "GeeksForGeeks", difficulty: "Easy" },
                 { title: "Quick Sort on Linked List", url: "https://www.geeksforgeeks.org/problems/quick-sort-on-linked-list/1", platform: "GeeksForGeeks", difficulty: "Hard" },
-                { title: "Rotate Linked List", url: "https://leetcode.com/problems/rotate-list/", platform: "LeetCode", difficulty: "Medium" }
+                { title: "Rotate Linked List", url: "https://leetcode.com/problems/rotate-list/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Split Linked List in Parts", url: "https://leetcode.com/problems/split-linked-list-in-parts/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Odd Even Linked List", url: "https://leetcode.com/problems/odd-even-linked-list/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Flatten Multilevel DLL", url: "https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Partition List", url: "https://leetcode.com/problems/partition-list/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Given only pointer to delete node", url: "https://www.geeksforgeeks.org/problems/delete-a-node-in-linked-list/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Segregate 0s 1s and 2s", url: "https://www.geeksforgeeks.org/problems/given-a-linked-list-of-0s-1s-and-2s-sort-it/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "First Non-Repeating in Stream", url: "https://www.geeksforgeeks.org/problems/first-non-repeating-character-in-a-stream1216/1", platform: "GeeksForGeeks", difficulty: "Medium" }
             ]
         },
         {
@@ -176,7 +213,16 @@ const babbar450 = {
                 { title: "Maximum Path Sum", url: "https://leetcode.com/problems/binary-tree-maximum-path-sum/", platform: "LeetCode", difficulty: "Hard" },
                 { title: "Maximum Width", url: "https://leetcode.com/problems/maximum-width-of-binary-tree/", platform: "LeetCode", difficulty: "Medium" },
                 { title: "Isomorphic Trees", url: "https://www.geeksforgeeks.org/problems/check-if-tree-is-isomorphic/1", platform: "GeeksForGeeks", difficulty: "Medium" },
-                { title: "Flippped Binary Tree Pre", url: "https://www.geeksforgeeks.org/problems/flip-binary-tree/1", platform: "GeeksForGeeks", difficulty: "Medium" }
+                { title: "Flippped Binary Tree Pre", url: "https://www.geeksforgeeks.org/problems/flip-binary-tree/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Flatten Binary Tree to LL", url: "https://leetcode.com/problems/flatten-binary-tree-to-linked-list/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Path Sum III", url: "https://leetcode.com/problems/path-sum-iii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "All Nodes Distance K", url: "https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Count Complete Tree Nodes", url: "https://leetcode.com/problems/count-complete-tree-nodes/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Minimum Time to Collect Apples", url: "https://leetcode.com/problems/minimum-time-to-collect-all-apples-in-a-tree/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Vertical Order Traversal", url: "https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Count Nodes in Complete BT", url: "https://www.geeksforgeeks.org/problems/count-number-of-nodes-in-a-binary-tree/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Morris Inorder Traversal", url: "https://leetcode.com/problems/binary-tree-inorder-traversal/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Connect Nodes at Same Level", url: "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/", platform: "LeetCode", difficulty: "Medium" }
             ]
         },
         {
@@ -258,7 +304,14 @@ const babbar450 = {
                 { title: "Largest Rectangle in Histogram", url: "https://leetcode.com/problems/largest-rectangle-in-histogram/", platform: "LeetCode", difficulty: "Hard" },
                 { title: "Maximal Rectangle", url: "https://leetcode.com/problems/maximal-rectangle/", platform: "LeetCode", difficulty: "Hard" },
                 { title: "Min Stack", url: "https://leetcode.com/problems/min-stack/", platform: "LeetCode", difficulty: "Medium" },
-                { title: "Queue with Max Operation", url: "https://www.geeksforgeeks.org/problems/maximum-of-all-subarrays-of-size-k3101/1", platform: "GeeksForGeeks", difficulty: "Medium" }
+                { title: "Queue with Max Operation", url: "https://www.geeksforgeeks.org/problems/maximum-of-all-subarrays-of-size-k3101/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "First Negative in Every Window", url: "https://www.geeksforgeeks.org/problems/first-negative-integer-in-every-window-of-size-k3345/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Check Redundant Brackets", url: "https://www.geeksforgeeks.org/problems/expression-contains-redundant-bracket-or-not/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Implement N Stacks in Array", url: "https://www.geeksforgeeks.org/problems/implement-two-stacks-in-an-array/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Expression Evaluation", url: "https://www.geeksforgeeks.org/problems/expression-evaluation5624/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Nearest Smaller Element", url: "https://www.geeksforgeeks.org/problems/nearest-smaller-element2949/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Interleave First Half with Second Half", url: "https://www.geeksforgeeks.org/problems/interleave-the-first-half-of-the-queue-with-second-half/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Sum of Min and Max of Subarray", url: "https://www.geeksforgeeks.org/problems/sum-of-minimum-and-maximum-elements-of-all-subarrays-of-size-k5900/1", platform: "GeeksForGeeks", difficulty: "Medium" }
             ]
         },
         {
@@ -299,7 +352,22 @@ const babbar450 = {
                 { title: "Bipartite Graph", url: "https://leetcode.com/problems/is-graph-bipartite/", platform: "LeetCode", difficulty: "Medium" },
                 { title: "Bridges in Graph", url: "https://leetcode.com/problems/critical-connections-in-a-network/", platform: "LeetCode", difficulty: "Hard" },
                 { title: "Course Schedule", url: "https://leetcode.com/problems/course-schedule/", platform: "LeetCode", difficulty: "Medium" },
-                { title: "Shortest Path DAG", url: "https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-graph/1", platform: "GeeksForGeeks", difficulty: "Medium" }
+                { title: "Shortest Path DAG", url: "https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-graph/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Negative Weight Cycle", url: "https://www.geeksforgeeks.org/problems/negative-weight-cycle3504/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Cheapest Flights Within K Stops", url: "https://leetcode.com/problems/cheapest-flights-within-k-stops/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Minimum Spanning Tree", url: "https://www.geeksforgeeks.org/problems/minimum-spanning-tree/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Snakes and Ladders", url: "https://leetcode.com/problems/snakes-and-ladders/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Find Eventual Safe States", url: "https://leetcode.com/problems/find-eventual-safe-states/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Making A Large Island", url: "https://leetcode.com/problems/making-a-large-island/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Minimum Steps by Knight", url: "https://www.geeksforgeeks.org/problems/steps-by-knight5927/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Euler Path", url: "https://www.geeksforgeeks.org/problems/euler-circuit-and-path/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Find the Number of Islands", url: "https://www.geeksforgeeks.org/problems/find-the-number-of-islands/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Journey to the Moon", url: "https://www.hackerrank.com/challenges/journey-to-the-moon/problem", platform: "HackerRank", difficulty: "Medium" },
+                { title: "Prerequisite Tasks", url: "https://www.geeksforgeeks.org/problems/prerequisite-tasks/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Path With Minimum Effort", url: "https://leetcode.com/problems/path-with-minimum-effort/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Articulation Point", url: "https://www.geeksforgeeks.org/problems/articulation-point2616/1", platform: "GeeksForGeeks", difficulty: "Hard" },
+                { title: "Mother Vertex", url: "https://www.geeksforgeeks.org/problems/mother-vertex/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Longest Path in DAG", url: "https://www.geeksforgeeks.org/problems/longest-path-in-a-dag/1", platform: "GeeksForGeeks", difficulty: "Medium" }
             ]
         },
         {
@@ -329,7 +397,26 @@ const babbar450 = {
                 { title: "Count Derangements", url: "https://www.geeksforgeeks.org/problems/count-derangements/1", platform: "GeeksForGeeks", difficulty: "Medium" },
                 { title: "Boolean Parenthesization", url: "https://www.geeksforgeeks.org/problems/boolean-parenthesization5610/1", platform: "GeeksForGeeks", difficulty: "Hard" },
                 { title: "Painting Fence", url: "https://www.geeksforgeeks.org/problems/painting-the-fence3727/1", platform: "GeeksForGeeks", difficulty: "Medium" },
-                { title: "Optimal Strategy for Game", url: "https://www.geeksforgeeks.org/problems/optimal-strategy-for-a-game-1587115620/1", platform: "GeeksForGeeks", difficulty: "Medium" }
+                { title: "Optimal Strategy for Game", url: "https://www.geeksforgeeks.org/problems/optimal-strategy-for-a-game-1587115620/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Scramble String", url: "https://leetcode.com/problems/scramble-string/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Mobile Numeric Keypad", url: "https://www.geeksforgeeks.org/problems/mobile-numeric-keypad5456/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Binomial Coefficient", url: "https://www.geeksforgeeks.org/problems/ncr1019/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Friends Pairing Problem", url: "https://www.geeksforgeeks.org/problems/friends-pairing-problem5425/1", platform: "GeeksForGeeks", difficulty: "Easy" },
+                { title: "Gold Mine Problem", url: "https://www.geeksforgeeks.org/problems/gold-mine-problem2608/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Assembly Line Scheduling", url: "https://www.geeksforgeeks.org/problems/assembly-line-scheduling/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Optimal BST", url: "https://www.geeksforgeeks.org/problems/optimal-binary-search-tree2214/1", platform: "GeeksForGeeks", difficulty: "Hard" },
+                { title: "Maximum Profit in Job Scheduling", url: "https://leetcode.com/problems/maximum-profit-in-job-scheduling/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Maximum Length of Repeated Subarray", url: "https://leetcode.com/problems/maximum-length-of-repeated-subarray/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Minimum Cost to Fill Bag", url: "https://www.geeksforgeeks.org/problems/minimum-cost-to-fill-given-weight-in-a-bag1956/1", platform: "GeeksForGeeks", difficulty: "Medium" },
+                { title: "Interleaved Strings", url: "https://leetcode.com/problems/interleaving-string/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Maximum Sum of 3 Non Overlapping Subarrays", url: "https://leetcode.com/problems/maximum-sum-of-3-non-overlapping-subarrays/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Shortest Common Supersequence", url: "https://leetcode.com/problems/shortest-common-supersequence/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Burst Balloons", url: "https://leetcode.com/problems/burst-balloons/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Cherry Pickup", url: "https://leetcode.com/problems/cherry-pickup/", platform: "LeetCode", difficulty: "Hard" },
+                { title: "Delete Operation for Two Strings", url: "https://leetcode.com/problems/delete-operation-for-two-strings/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "House Robber II", url: "https://leetcode.com/problems/house-robber-ii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "House Robber III", url: "https://leetcode.com/problems/house-robber-iii/", platform: "LeetCode", difficulty: "Medium" },
+                { title: "Wildcard Matching", url: "https://leetcode.com/problems/wildcard-matching/", platform: "LeetCode", difficulty: "Hard" }
             ]
         },
         {

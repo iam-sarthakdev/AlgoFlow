@@ -351,11 +351,11 @@ const CuratedListsPage = () => {
 
     const handleCreatePattern = async (e) => {
         e.preventDefault();
-        if (!newPatternTitle || !currentListId) return;
+        if (!newPatternTitle || !currentListId || !list?.name) return;
         setSubmitting(true);
         try {
-            await listService.addSection(currentListId, newPatternTitle);
-            const updated = await listService.getList(currentListId);
+            await listService.createSection(currentListId, newPatternTitle);
+            const updated = await listService.getListByName(list.name);
             setList(updated);
             setNewPatternTitle('');
             setIsPatternModalOpen(false);
@@ -369,11 +369,11 @@ const CuratedListsPage = () => {
 
     const handleAddProblem = async (e) => {
         e.preventDefault();
-        if (!selectedSection || !currentListId) return;
+        if (!selectedSection || !currentListId || !list?.name) return;
         setSubmitting(true);
         try {
-            await listService.addProblem(currentListId, selectedSection, newProblem);
-            const updated = await listService.getList(currentListId);
+            await listService.addProblemToList(currentListId, selectedSection, newProblem);
+            const updated = await listService.getListByName(list.name);
             setList(updated);
             setNewProblem({ title: '', url: '', platform: 'LeetCode', difficulty: 'Medium' });
             setIsProblemModalOpen(false);
@@ -398,8 +398,8 @@ const CuratedListsPage = () => {
                 return;
             }
             try {
-                await listService.deleteSection(currentListId, deleteModal.sectionId);
-                const updated = await listService.getList(currentListId);
+                await listService.deleteSection(currentListId, deleteModal.sectionId, deletePassword);
+                const updated = await listService.getListByName(list.name);
                 setList(updated);
                 setDeleteModal({ open: false, type: null, sectionId: null, problemId: null });
             } catch (err) {
@@ -408,7 +408,7 @@ const CuratedListsPage = () => {
         } else {
             try {
                 await listService.deleteProblem(currentListId, deleteModal.sectionId, deleteModal.problemId);
-                const updated = await listService.getList(currentListId);
+                const updated = await listService.getListByName(list.name);
                 setList(updated);
                 setDeleteModal({ open: false, type: null, sectionId: null, problemId: null });
             } catch (err) {
@@ -436,7 +436,7 @@ const CuratedListsPage = () => {
         setList(updatedList);
 
         try {
-            await listService.toggleCompletion(currentListId, sectionId, problemId);
+            await listService.toggleProblemCompletion(currentListId, sectionId, problemId);
         } catch (err) {
             console.error(err);
             // Revert on error (could fetch list again)
@@ -462,9 +462,7 @@ const CuratedListsPage = () => {
         setList(updatedList);
 
         try {
-            await markAsRevised(problemId); // Assuming we have global ID or separate service? 
-            // Actually usually integrated. Let's assume listService handles it or valid endpoint.
-            // checking imports... import { markAsRevised } from '../services/api'; -> Correct.
+            await listService.incrementRevision(currentListId, sectionId, problemId);
         } catch (err) {
             console.error(err);
         }
@@ -508,9 +506,12 @@ const CuratedListsPage = () => {
                 setList({ ...list, sections: newSections });
 
                 try {
-                    await listService.reorderSection(currentListId, active.id, newIndex);
+                    await listService.reorderSection(currentListId, oldIndex, newIndex);
                 } catch (err) {
                     console.error("Reorder failed", err);
+                    // Revert on error
+                    const updated = await listService.getListByName(list.name);
+                    setList(updated);
                 }
             }
         }

@@ -39,12 +39,17 @@ const codeforcesProblemSchema = new Schema({
     notes: {
         type: String,
         default: ''
+    },
+    order: {
+        type: Number,
+        default: 0
     }
 }, {
     timestamps: true
 });
 
 // Indexes for performance
+codeforcesProblemSchema.index({ user_id: 1, order: 1 });
 codeforcesProblemSchema.index({ user_id: 1, difficulty: 1 });
 codeforcesProblemSchema.index({ user_id: 1, topics: 1 });
 codeforcesProblemSchema.index({ user_id: 1, createdAt: -1 });

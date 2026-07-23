@@ -39,6 +39,12 @@ export const codeforcesAPI = {
     getStats: async () => {
         const response = await api.get('/codeforces/stats');
         return response.data;
+    },
+
+    // Reorder problems (drag-and-drop)
+    reorder: async (orderedIds) => {
+        const response = await api.patch('/codeforces/reorder', { orderedIds });
+        return response.data;
     }
 };
 

@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, ExternalLink, Trash2, Edit2, Eye, EyeOff, X, Save, Code2, Tag, ChevronDown, CheckCircle, Filter, Zap } from 'lucide-react';
+import { Plus, Search, ExternalLink, Trash2, Edit2, Eye, EyeOff, X, Save, Code2, Tag, ChevronDown, CheckCircle, Filter, Zap, GripVertical } from 'lucide-react';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { codeforcesAPI } from '../services/codeforcesApi';
 import CodeEditor from '../components/CodeEditor';
 import toast from 'react-hot-toast';
@@ -29,6 +32,80 @@ const getDiffLabel = (d) => {
     if(d<2600) return 'International Master'; if(d<3000) return 'Grandmaster'; return 'Legendary';
 };
 
+// Sortable problem row component
+const SortableItem = ({ p, i, revealed, toggleReveal, toggleSolved, setSolutionModal, openEdit, handleDelete, getDiffColor, getDiffLabel }) => {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: p._id });
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 50 : 'auto',
+        opacity: isDragging ? 0.85 : 1,
+    };
+    const diffColor = getDiffColor(p.difficulty);
+
+    return (
+        <div ref={setNodeRef} style={style} className={`glass-card p-5 border transition-all duration-300 group ${isDragging ? 'border-cyan-500/40 shadow-lg shadow-cyan-500/10' : 'border-white/5 hover:border-white/10'}`}>
+            <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                    {/* Drag Handle */}
+                    <button {...attributes} {...listeners} className="flex-shrink-0 p-1 cursor-grab active:cursor-grabbing text-slate-600 hover:text-slate-300 transition-colors touch-none" title="Drag to reorder">
+                        <GripVertical size={18}/>
+                    </button>
+                    {/* Solved Toggle */}
+                    <button onClick={()=>toggleSolved(p)} className="flex-shrink-0">
+                        <CheckCircle size={22} className={`transition-colors ${p.isSolved ? 'text-emerald-400' : 'text-slate-600 hover:text-slate-400'}`}/>
+                    </button>
+                    {/* Name & Link */}
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                            <a href={p.url} target="_blank" rel="noopener noreferrer"
+                                className="font-bold text-white hover:text-cyan-400 transition-colors truncate" onClick={e=>e.stopPropagation()}>
+                                {p.name}
+                            </a>
+                            <ExternalLink size={14} className="text-slate-500 flex-shrink-0"/>
+                        </div>
+                        <div className="flex items-center gap-2 mt-2 flex-wrap">
+                            {revealed ? (
+                                <>
+                                    <span className="px-2.5 py-1 rounded-full text-xs font-bold border" style={{color:diffColor, borderColor:diffColor+'60', backgroundColor:diffColor+'20'}}>
+                                        {p.difficulty} · {getDiffLabel(p.difficulty)}
+                                    </span>
+                                    {p.topics.map(t=>(
+                                        <span key={t} className="px-2.5 py-1 rounded-full text-xs bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-medium">{t}</span>
+                                    ))}
+                                </>
+                            ) : (
+                                <>
+                                    <span className="px-2.5 py-1 rounded-full text-xs font-bold border border-white/10 bg-white/5 text-slate-500">● ● ● ●</span>
+                                    {p.topics.length > 0 && <span className="px-2.5 py-1 rounded-full text-xs border border-white/10 bg-white/5 text-slate-500">{p.topics.length} tag{p.topics.length>1?'s':''} hidden</span>}
+                                </>
+                            )}
+                            <button onClick={()=>toggleReveal(p._id)} className="p-1 rounded-lg hover:bg-white/10 text-slate-500 hover:text-white transition-colors" title={revealed?'Hide':'Reveal'}>
+                                {revealed ? <EyeOff size={14}/> : <Eye size={14}/>}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {/* Actions */}
+                <div className="flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                    <button onClick={()=>setSolutionModal({...p, solution:p.solution||''})}
+                        className="p-2 bg-violet-500/20 hover:bg-violet-500/30 text-violet-400 rounded-lg transition-colors" title="View/Edit Solution">
+                        <Code2 size={16}/>
+                    </button>
+                    <button onClick={()=>openEdit(p)}
+                        className="p-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-lg transition-colors" title="Edit">
+                        <Edit2 size={16}/>
+                    </button>
+                    <button onClick={()=>handleDelete(p._id)}
+                        className="p-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 rounded-lg transition-colors" title="Delete">
+                        <Trash2 size={16}/>
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const CodeforcesPage = () => {
     const [problems, setProblems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -41,6 +118,32 @@ const CodeforcesPage = () => {
     const [revealedIds, setRevealedIds] = useState(new Set());
     const [topicDropdown, setTopicDropdown] = useState(false);
     const [form, setForm] = useState({ name:'', url:'', difficulty:'', topics:[], solution:'', notes:'' });
+
+    // Drag-and-drop sensors
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    );
+
+    const handleDragEnd = async (event) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) return;
+
+        const oldIndex = problems.findIndex(p => p._id === active.id);
+        const newIndex = problems.findIndex(p => p._id === over.id);
+        const newProblems = arrayMove(problems, oldIndex, newIndex);
+
+        // Optimistic update
+        setProblems(newProblems);
+
+        // Persist to backend
+        try {
+            await codeforcesAPI.reorder(newProblems.map(p => p._id));
+        } catch (e) {
+            toast.error('Failed to save order');
+            loadProblems(); // revert
+        }
+    };
 
     const loadProblems = useCallback(async () => {
         try {
@@ -202,73 +305,15 @@ const CodeforcesPage = () => {
                     </button>
                 </motion.div>
             ) : (
-                <div className="space-y-3">
-                    <AnimatePresence>
-                        {problems.map((p, i) => {
-                            const revealed = revealedIds.has(p._id);
-                            const diffColor = getDiffColor(p.difficulty);
-                            return (
-                                <motion.div key={p._id} initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} exit={{opacity:0}} transition={{delay:i*0.03}}
-                                    className="glass-card p-5 border border-white/5 hover:border-white/10 transition-all duration-300 group">
-                                    <div className="flex items-center justify-between flex-wrap gap-3">
-                                        <div className="flex items-center gap-4 flex-1 min-w-0">
-                                            {/* Solved Toggle */}
-                                            <button onClick={()=>toggleSolved(p)} className="flex-shrink-0">
-                                                <CheckCircle size={22} className={`transition-colors ${p.isSolved ? 'text-emerald-400' : 'text-slate-600 hover:text-slate-400'}`}/>
-                                            </button>
-                                            {/* Name & Link */}
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2">
-                                                    <a href={p.url} target="_blank" rel="noopener noreferrer"
-                                                        className="font-bold text-white hover:text-cyan-400 transition-colors truncate" onClick={e=>e.stopPropagation()}>
-                                                        {p.name}
-                                                    </a>
-                                                    <ExternalLink size={14} className="text-slate-500 flex-shrink-0"/>
-                                                </div>
-                                                {/* Hidden difficulty & topics - click to reveal */}
-                                                <div className="flex items-center gap-2 mt-2 flex-wrap">
-                                                    {revealed ? (
-                                                        <>
-                                                            <span className="px-2.5 py-1 rounded-full text-xs font-bold border" style={{color:diffColor, borderColor:diffColor+'60', backgroundColor:diffColor+'20'}}>
-                                                                {p.difficulty} · {getDiffLabel(p.difficulty)}
-                                                            </span>
-                                                            {p.topics.map(t=>(
-                                                                <span key={t} className="px-2.5 py-1 rounded-full text-xs bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-medium">{t}</span>
-                                                            ))}
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <span className="px-2.5 py-1 rounded-full text-xs font-bold border border-white/10 bg-white/5 text-slate-500">● ● ● ●</span>
-                                                            {p.topics.length > 0 && <span className="px-2.5 py-1 rounded-full text-xs border border-white/10 bg-white/5 text-slate-500">{p.topics.length} tag{p.topics.length>1?'s':''} hidden</span>}
-                                                        </>
-                                                    )}
-                                                    <button onClick={()=>toggleReveal(p._id)} className="p-1 rounded-lg hover:bg-white/10 text-slate-500 hover:text-white transition-colors" title={revealed?'Hide':'Reveal'}>
-                                                        {revealed ? <EyeOff size={14}/> : <Eye size={14}/>}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {/* Actions */}
-                                        <div className="flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                                            <button onClick={()=>setSolutionModal({...p, solution:p.solution||''})}
-                                                className="p-2 bg-violet-500/20 hover:bg-violet-500/30 text-violet-400 rounded-lg transition-colors" title="View/Edit Solution">
-                                                <Code2 size={16}/>
-                                            </button>
-                                            <button onClick={()=>openEdit(p)}
-                                                className="p-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-lg transition-colors" title="Edit">
-                                                <Edit2 size={16}/>
-                                            </button>
-                                            <button onClick={()=>handleDelete(p._id)}
-                                                className="p-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 rounded-lg transition-colors" title="Delete">
-                                                <Trash2 size={16}/>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            );
-                        })}
-                    </AnimatePresence>
-                </div>
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                    <SortableContext items={problems.map(p=>p._id)} strategy={verticalListSortingStrategy}>
+                        <div className="space-y-3">
+                            {problems.map((p, i) => (
+                                <SortableItem key={p._id} p={p} i={i} revealed={revealedIds.has(p._id)} toggleReveal={toggleReveal} toggleSolved={toggleSolved} setSolutionModal={setSolutionModal} openEdit={openEdit} handleDelete={handleDelete} getDiffColor={getDiffColor} getDiffLabel={getDiffLabel} />
+                            ))}
+                        </div>
+                    </SortableContext>
+                </DndContext>
             )}
 
             {/* Add/Edit Modal */}

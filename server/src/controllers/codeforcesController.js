@@ -3,7 +3,7 @@ import CodeforcesProblem from '../models/CodeforcesProblem.js';
 // Get all CF problems for the authenticated user
 export const getProblems = async (req, res) => {
     try {
-        const { topic, minDifficulty, maxDifficulty, search, isSolved, sort = 'createdAt', order = 'desc' } = req.query;
+        const { topic, minDifficulty, maxDifficulty, search, isSolved, sort = 'order', order = 'asc' } = req.query;
         const filter = { user_id: req.user.userId };
 
         if (topic) {
@@ -68,6 +68,10 @@ export const createProblem = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Name, URL, and difficulty are required' });
         }
 
+        // Auto-assign order: put new problem at the end
+        const maxOrderDoc = await CodeforcesProblem.findOne({ user_id: req.user.userId }).sort({ order: -1 }).select('order');
+        const nextOrder = maxOrderDoc ? (maxOrderDoc.order + 1) : 0;
+
         const problem = new CodeforcesProblem({
             user_id: req.user.userId,
             name,
@@ -75,7 +79,8 @@ export const createProblem = async (req, res) => {
             difficulty: parseInt(difficulty),
             topics: topics || [],
             solution: solution || '',
-            notes: notes || ''
+            notes: notes || '',
+            order: nextOrder
         });
 
         await problem.save();
@@ -134,6 +139,31 @@ export const deleteProblem = async (req, res) => {
     } catch (error) {
         console.error('Error deleting CF problem:', error);
         res.status(500).json({ success: false, message: 'Failed to delete problem', error: error.message });
+    }
+};
+
+// Reorder problems (drag-and-drop)
+export const reorderProblems = async (req, res) => {
+    try {
+        const { orderedIds } = req.body; // Array of problem _id strings in new order
+
+        if (!orderedIds || !Array.isArray(orderedIds)) {
+            return res.status(400).json({ success: false, message: 'orderedIds array is required' });
+        }
+
+        const bulkOps = orderedIds.map((id, index) => ({
+            updateOne: {
+                filter: { _id: id, user_id: req.user.userId },
+                update: { $set: { order: index } }
+            }
+        }));
+
+        await CodeforcesProblem.bulkWrite(bulkOps);
+
+        res.json({ success: true, message: 'Reordered successfully' });
+    } catch (error) {
+        console.error('Error reordering CF problems:', error);
+        res.status(500).json({ success: false, message: 'Failed to reorder', error: error.message });
     }
 };
 

@@ -6,7 +6,8 @@ import {
     createProblem,
     updateProblem,
     deleteProblem,
-    getStats
+    getStats,
+    reorderProblems
 } from '../controllers/codeforcesController.js';
 
 const router = express.Router();
@@ -16,6 +17,9 @@ router.use(authenticate);
 
 // Stats
 router.get('/stats', getStats);
+
+// Reorder
+router.patch('/reorder', reorderProblems);
 
 // CRUD
 router.get('/', getProblems);

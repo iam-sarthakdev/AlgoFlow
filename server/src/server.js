@@ -15,6 +15,7 @@ import platformRoutes from './routes/platform.routes.js';
 import feedbackRoutes from './routes/feedback.routes.js';
 import profileRoutes from './routes/profile.routes.js';
 import compilerRoutes from './routes/compiler.routes.js';
+import codeforcesRoutes from './routes/codeforces.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { scheduleReminderJob } from './jobs/reminderJob.js';
 import { scheduleStatsRefreshJob } from './jobs/statsRefreshJob.js';
@@ -54,6 +55,7 @@ app.use('/api/platform', platformRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/public/profile', profileRoutes);
 app.use('/api/compiler', compilerRoutes);
+app.use('/api/codeforces', codeforcesRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

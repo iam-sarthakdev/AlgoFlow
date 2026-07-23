@@ -28,6 +28,7 @@ import SystemDesignRoadmapPage from './pages/SystemDesignRoadmapPage';
 import DBMSSheetPage from './pages/DBMSSheetPage';
 import OSSheetPage from './pages/OSSheetPage';
 import CNSheetPage from './pages/CNSheetPage';
+import CodeforcesPage from './pages/CodeforcesPage';
 import PageLayout from './components/PageLayout';
 
 import './index.css';
@@ -221,6 +222,13 @@ function AppRoutes() {
                 <ProtectedRoute>
                     <PageLayout fullWidth>
                         <CNSheetPage />
+                    </PageLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/cf-problems" element={
+                <ProtectedRoute>
+                    <PageLayout>
+                        <CodeforcesPage />
                     </PageLayout>
                 </ProtectedRoute>
             } />

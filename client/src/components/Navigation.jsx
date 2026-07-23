@@ -42,6 +42,7 @@ const Navigation = () => {
         { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { path: '/problems', label: 'Questions', icon: BookOpen },
         { path: '/dsa-sheets', label: 'DSA Sheets', icon: FileText },
+        { path: '/cf-problems', label: 'CF Problems', icon: Layers },
     ];
 
     const exploreGroup = [
